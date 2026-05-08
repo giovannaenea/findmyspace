@@ -1,0 +1,203 @@
+.image-upload-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.image-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  background: var(--white);
+  border: 1.5px dashed var(--teal);
+  border-radius: var(--radius-md);
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.image-upload-btn:hover {
+  background: rgba(40, 102, 110, 0.06);
+  border-style: solid;
+}
+
+.image-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.image-file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s;
+}
+
+.image-file-item.done { border-color: rgba(40,102,110,0.3); }
+.image-file-item.error { border-color: rgba(229,62,62,0.3); }
+
+.image-file-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.image-file-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--teal);
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+.image-file-name:hover { text-decoration: underline; }
+
+.image-file-name-plain {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Progress bar */
+.upload-progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: var(--teal);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Animated shimmer for compressing state */
+.upload-progress-shimmer {
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, var(--border) 0%, var(--teal) 50%, var(--border) 100%);
+  background-size: 200% 100%;
+  border-radius: 2px;
+  animation: shimmer 1.2s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.upload-status-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.upload-status-text.error { color: #e53e3e; font-weight: 600; }
+
+.image-file-cancel {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.image-file-cancel:hover { color: #e53e3e; }
+
+.image-file-delete {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.image-file-delete:hover { color: #e53e3e; }
+
+/* Two upload buttons side by side */
+.image-upload-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.image-upload-btns .image-upload-btn {
+  flex: 1;
+}
+
+.url-btn.active {
+  background: rgba(40,102,110,0.08);
+  border-style: solid;
+}
+
+/* URL input row */
+.url-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.url-input-field {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--navy);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.url-input-field:focus { border-color: var(--teal); }
+.url-input-field.error { border-color: #e53e3e; }
+
+.url-add-btn {
+  padding: 10px 16px;
+  background: var(--teal);
+  color: var(--cream);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.url-add-btn:hover { background: var(--navy); }
+
+.url-error-text {
+  font-size: 12px;
+  color: #e53e3e;
+  font-weight: 600;
+  margin-top: -4px;
+}

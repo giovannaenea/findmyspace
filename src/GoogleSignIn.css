@@ -1,0 +1,36 @@
+.signin-container {
+  display: flex;
+  align-items: center;
+}
+
+.signin-btn {
+  padding: 8px 18px;
+  border: 1.5px solid var(--navy);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.signin-btn:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.signout-btn {
+  padding: 8px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.signout-btn:hover {
+  border-color: #e53e3e;
+  color: #e53e3e;
+}

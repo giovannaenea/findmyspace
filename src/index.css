@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+:root {
+  --navy: #033f63;
+  --teal: #28666e;
+  --sage: #7c9885;
+  --olive: #b5b682;
+  --cream: #fedc97;
+  --white: #ffffff;
+  --bg: #f7f8f9;
+  --border: #e8eaec;
+  --text-primary: #033f63;
+  --text-secondary: #5a7a8a;
+  --text-muted: #9bb0ba;
+  --shadow-sm: 0 1px 3px rgba(3,63,99,0.08);
+  --shadow-md: 0 4px 16px rgba(3,63,99,0.10);
+  --shadow-lg: 0 8px 32px rgba(3,63,99,0.13);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+button {
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: 'DM Sans', sans-serif;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}

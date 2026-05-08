@@ -1,0 +1,13 @@
+.back-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--navy);
+  padding: 16px 16px 4px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  color: var(--teal);
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "id": "Qingyou-Deluxe-Suite",
+    "name": "Qingyou Deluxe Suite",
+    "address": "No. 119, Wuquan, Shoufeng Township",
+    "phone": "+0953575331",
+    "housingType": "Apartment",
+    "price": 7500,
+    "rating": 0,
+    "numberOfReviews": 0,
+    "lat": 23.8897,
+    "lng": 121.5508,
+    "bedOptions": ["1 Bedroom"],
+    "amenities": ["Furniture", "Private Bathroom", "Shared Bathroom", "Washer", "Dryer", "Pets Allowed",
+    "Water Dispenser", "Refrigerator", "Parking", "Laundry Room", "AC", "Cooking Allowed"],
+    "reviews": [],
+    "status": "approved",
+    "landlordId": "",
+    "line": "",
+    "email": "",
+    "photos": [
+      "https://img1.591.com.tw/house/2025/05/07/174660024588230607.jpg!1000x.water2.jpg"
+    ]
+  },
+
+  {
+    "id": "Zhongzheng-Road-Student-Suite",
+    "name": "Zhongzheng Road Student Suite",
+    "address": "No. 156, Zhongzheng Road, Shoufeng Township",
+    "phone": "+0972528577",
+    "housingType": "Apartment",
+    "price": 6000,
+    "rating": 0,
+    "numberOfReviews": 0,
+    "lat": 23.904383,
+    "lng": 121.532897,
+    "bedOptions": ["1 Bedroom"],
+    "amenities": ["Furniture", "Private Bathroom", "Washer", "Water Dispenser", "Refrigerator", "Parking",
+    "AC", "Cooking Allowed"],
+    "reviews": [],
+    "status": "approved",
+    "landlordId": "",
+    "line": "",
+    "email": "",
+    "photos": [
+      "https://img2.591.com.tw/house/2025/12/27/176684171825858603.jpg!1000x.water2.jpg",
+      "https://img1.591.com.tw/house/2025/12/27/176684171825907300.jpg!1000x.water2.jpg",
+      "https://img1.591.com.tw/house/2025/12/27/176684171823045404.jpg!1000x.water2.jpg",
+      "https://img2.591.com.tw/house/2025/12/27/176684171823367406.jpg!1000x.water2.jpg"
+    ]
+  },
+
+  {
+    "id": "Pinghe-Village-Bedroom",
+    "name": "Pinghe Village Bedroom",
+    "address": "Shoufeng Township, Hualien County, 974",
+    "phone": "+0999999999",
+    "housingType": "Apartment",
+    "price": 4000,
+    "rating": 0,
+    "numberOfReviews": 0,
+    "lat": 23.897239,
+    "lng": 121.553514,
+    "bedOptions": ["1 Bedroom"],
+    "amenities": ["Furniture", "Shared Bathroom", "Water Dispenser", "Refrigerator", "Parking",
+    "AC", "Cooking Allowed"],
+    "reviews": [],
+    "status": "approved",
+    "landlordId": "",
+    "line": "",
+    "email": "",
+    "photos": [
+      "https://lh3.googleusercontent.com/rd-d/ALs6j_GO4UjKQWUZzko9DfMMrM2Sz6UYkiIMn2QG8z0dpVboPH3buBQjTJRMPaPWn8yIU8SgpuyIOXhtoMeYIxFrma3FltV7iFCVGiDZnGYZydRN3Obl6c6ZvPt-bqgELTiOAHORkiuGDKu5LnrqE6D3MATEQQDvIOTh27OBd98GATTYLg6DWRAjeLuGsoI7n26I2pXXfx4IrGwEkAdbnct1M5ARyi8IPcL_BSUmLFuSWfYSTGbaXhqYBOITbehxal6a8teZ7CkKDN2VD5Di3gj3o9vd8NaceuSAbRP1hc4rxZ3156vyiy1ZnW3BNIkpzv22WJIAUFjNwdGKzHq3mdB-cNtAvsxEXN_2Or23VgjnbKl8UERwFRfvEyHce4TGEay8JZBgLp6NjzzLNCtoRPAsn5cigPSX6mxos4nG9bvqlD8b7mUwB7qbRKwT58-YQUA34phbbVYFD-57UL0LYvGDX9bxdD90RPophWp_wJTKOjfBHpkyUnoROwk4PbrDavzhJwkCYWx0bIpAp4NvxlS3MlpnwGW5p-KbFtI63O4bKdzhFwAQoIbR51hAiOI0guumHkX4KZLdSmPbPwN65wNHE7-9rteHIQ97Sf-cnYwEHZP23zyiOQ-LxYYCsg8egD1Jr-kp4tJMKOFYrhA-ikGG-fu-JVWzX983Al8ELbpxyA9ZwskZzV2AfUsNkYQVpZzQjuVO7mj7LjsPgFrPBdxnYdBZfHq2WFk3QyXkOUg9ueZyH_32iHqEOTEJMs2DxEt5yMxpGgic6ThXmlKPrCq7BtS2OWST0Pf0-JmoJJnqKqwcPJD71cd2Jvcu1AigAWK5SJPbVXGR10jxPss_xzDaDjYm-LIJ4AGfHW9x5a3bWcpaZ9zaYuIptXJFX9rzdiNxDcOSpm09b6DWoMPDqSQtQk4CQvdESTkjLI7aflVEKmZNWCyoxnOSwk3uFw-jjroxPRI26lmaDPbzNBgFB3ltzbAeciWHSuLO1RlRilx198fy36YbqjyFB9K5PrYt6HpYoFGkm1Pa2l91a4oCEl_Sg9YsYXGQx0AauKywq2K8p4zEv6JPynH8l_vjMjW_3AY5Mh_cyULrnRFrXD1SbP5KNF3FwU7XrDr347UjY3DZHL_lECOrRfVSkxxzEsiewZDMhLiIbUq7sfWczJHYjUWEkDoj17yP2gyrCvk=w1366-h605?auditContext=prefetch",
+      "https://lh3.googleusercontent.com/rd-d/ALs6j_H0kFl0zeKQn6GktqQZrqDRXKipv8s2qD6978WnpkHwK7sVlqtCPXxZdkRon-k4dnjRW0hstAMP2NhJRnnspZwlEHYAMDe4tRhG2oan-dwr9mqivUwbYduI2sVVBTWO6wMLX73OAoKGCRnlNQI17j9aUH0AtEeVrZkAgQOesdfhsmbsyY02B0R_9vvxOi6Ju6-GRUyHZJqGjhMDItm5gokk2c0T6YmHkwiplRQ2KHQE_hkwuFR6L8COeFL43AB077i09_I65BTLqomfrYQMF23uk2fwxTHkBQDhjBrdhUsxxUcjLZkeJvzCy2nMms0qUzRJgMIit7GOrhyIDhfUOSd6N3zjpQIqbo6G2LLrCnoImO6gl3TjejptJ_JZMCmSMOi_2Wl3yRlLe2RytwGXaL284s1ygtb-k7agtP0v39WEuDek7G2lOOIhxQnYbHt3h9isfFeyjovI7WdNsub-x8I1aGXujFgUv5GHEiBZDvQQQ7hhLXeSG1USzEU1hUKXdThxYCMzBVj3vPcWota8uartIopj2y1hTZflIO-sZXtxoSvdVX8peTfsRdnGnGFjHeVOTgSNIir1bqiBKOOJZRCG6WFpG_OtSxU9uZ2ZDLxUjgCWCQj3I7RMnxWaHlBJDnJxKCLRuphoPMle3-QY7zxh0izJfcgiQiOUvB2QDnK1EGV7TY8NHByS42WtafqH_qQtAku_dnUTvFuRemrErkcQky1v3ZOpqFztmHxDPju7Z5qfOTKl0OYpUEt5OLJGwZZ7RypA_LaSHvPXhwHSnrVS-g8tX0jYMTyD387dpCV1WKSdsAhgVjyuWw2rpKykm5KjM2-5r0wUA9KwfiHlajN4eQhNoirTAeueom9W5EIdgxLvVXPIigBp40UYTbTk8Uof5uYMeb3cZy36dVmTkcjmPqao9oYqo2odNMSv9v2K2ZNqOk-VNUUwYwSDzabjQB0HGT-aOFIv28Spux47Scyp-BcX3Xhg4buQhZz3SzT6fPjyageGgm2GJhQKU4AolKkTvE2N1gG5y0wNzV2zi60sbDjYoTwzpQUWD1gdHQus38Ijehk65CiG3MiWFuzN7JDuYe1I9OU0Nk0FSER9As9j39LHqQ_FHoLmdQWVLW7FLYZaXl834nkKfAqo8PNGKfZ91hAqmk2NT7LXuKShaWTCne4dXyAfqjA=w1366-h605?auditContext=prefetch",
+      "https://lh3.googleusercontent.com/rd-d/ALs6j_G5E6p7DDPdz7QCki4WRP6wk2ajhdwLucAjuJN5e2ZEP0Ta88ejaQOPMSmeVCr8Jw3Q5HasAvlplx4uid-jTdgWbVxLdpc0GRwf1IL8uyL-fHjipbHoVWrMxpE-Sc9mglDfAIoKvoNPVyzpA7dwnA0-TWbmHcAHG9_KDCBcUPxIV6rhqOQzZHRaEnSHs29mrgikjavIBun-WgrAeLJdpGMosyieAjLBlVv9ymz7MICE-PKcLwXAZ4suQZCqfwyO-iK4JJDMxTWBkCa1Zp7Tqfc4fd3fTzbjoSsAyCdydl4UNMP4lSSUcQZTHyALE_2pC5qW7Z3eh5EPnu2jaAF7UYedseUx45gwBu0eltdZG9JekOtzZoUVsO2QkareH7_QdEhmlPH9WrWRnHnhmuerJn3O9Ze0uz_nxMeU_OTNupOGJ2C40wvEPtFhYhqGoAboE5PFBkUPkzktvQaeQUc7BS8I4m4PuUMa4nOjtWEqSCi9YBdnBHwxB2-NQz1ZLcK-DwovvAJjzbIX5ImK-zk9IYQutP5IXY5WKklT-x5E3_ksXVOvxIyW1iBccNZ48Zu0Ct59mb3jdPmErnij-gLb26dkMl52QhKD3q2LJPHEIMEHmwo7Lxk_ugSiefaCDjyYAZ9AOv7cfXiKemWy-fRiVJs7qII4qQmrjdhZQZPrjiLyVfCXZ83PFNtVd6N2kg5V38Mp9wUiKXgye7bRu8F-xnukCt6PE-oEh4grS2yYf2JrQ5jQPX6yYfuOWNBe7D8PtOexMHp0AxBicvmomgYOrMyqZCsj1KuyaToMbogTHUTRDG1-MHOSWniKU12KIBN7YpIG2KPRc3730ep2wDRu66G0vCP3YuKsec1iGEAhOTQsrlYWJL-YJjU8F6f5AWvHgMIBlZZ5keP6ToAqTFpe0XrOEbLHUTwpZz-XxJDDM17-oj7b1e8XV_eHGVCPKG58-btYX6tVVB2D-LaQH96G8EOanQbavi8lMbkflVQEZ_c9iYtwSYnU_75arRyqItVCtEB5okEy1xRhFxaZC11C2A__DrG9p8oKcctIDWuMGjesfCajJsFF_BoBjofoCCIWBZ25FqzXR88E3oW7Ex3Gs3ze4BpNAQ0maPgHsakLFzVCPMxGBseMFVoLMC-H2wFpMl1NyzK13Clx61FPb8fsEcN4X1uHnRV8OVZw=w1366-h605?auditContext=prefetch"
+        
+    ]
+  }
+]

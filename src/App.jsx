@@ -1,0 +1,340 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import { db, auth } from './firebase.mjs'
+import { collection, doc, setDoc, getDoc, getDocs, deleteDoc } from "firebase/firestore";
+import { signInWithPopup, signOut, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, deleteUser } from "firebase/auth";
+
+import SearchBar from './SearchBar';
+import MenuSelect from './MenuSelect';
+import FilterPage from './FilterPage';
+import PropertyDetails from './PropertyDetails';
+import FavoritesComponent from './FavoritesComponent';
+import NewBuilding from './NewBuilding';
+import Loading from './Loading';
+import PropertiesPagination from './PropertiesPagination';
+import RoleModal from './RoleModal';
+import ProfilePage from './ProfilePage';
+import MyProperties from './MyProperties';
+import AdminPanel from './AdminPanel';
+import Toast from './Toast';
+import './App.css';
+
+function App() {
+  const defaultConditions = {
+    searchTerm: '',
+    bedOptions: 'All',
+    orderBy: 'All',
+    amenities: [],
+    rentRange: [1000, 30000],
+    bathroomType: 'Any',
+  };
+
+  const [filteredProperties, setFilteredProperties] = useState([]);
+  const [conditions, setConditions] = useState(defaultConditions);
+  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = useCallback((message, type = 'error') => {
+    setToast({ message, type });
+  }, []);
+
+  // ─── Persist auth on refresh ──────────────────────────────────────────────────
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userRef = doc(db, "users", firebaseUser.uid);
+        const docSnap = await getDoc(userRef);
+        const userData = docSnap.exists() ? docSnap.data() : {};
+        setUser({
+          ...firebaseUser,
+          role: userData.role || null,
+          name: userData.name || firebaseUser.displayName,
+          profilePicture: userData.profilePicture || firebaseUser.photoURL,
+        });
+      } else {
+        setUser(null);
+      }
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // ─── Fetch properties ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    fetchAndListen();
+  }, []);
+
+  const fetchAndListen = async () => {
+    setLoading(true);
+    try {
+      const querySnapshot = await getDocs(collection(db, 'properties'));
+      const properties = [];
+      querySnapshot.forEach((doc) => {
+        properties.push({ id: doc.id, ...doc.data() });
+      });
+      setFilteredProperties(properties.filter(p => p.id && p.name && p.status !== 'pending'));
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      showToast('Failed to load properties. Please refresh.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ─── Search / filter ──────────────────────────────────────────────────────────
+  const handleSearch = (conditions) => {
+    let orderByField = null;
+    let searchTermTarget = null;
+    let amenitiesTarget = null;
+    let rentRangeTarget = null;
+    let bedOptionsTarget = null;
+
+    setConditions(conditions);
+
+    getDocs(collection(db, "properties")).then((querySnapshot) => {
+      let results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Always filter out pending
+      results = results.filter(p => p.status !== 'pending');
+
+      for (const [key, value] of Object.entries(conditions)) {
+        if (key === "searchTerm" && value) {
+          searchTermTarget = value.trim().toLowerCase();
+        } else if (key === "orderBy" && value && value !== 'All') {
+          orderByField = value;
+        } else if (key === "bedOptions" && value && value !== 'All') {
+          bedOptionsTarget = value;
+        } else if (key === "amenities" && Array.isArray(value) && value.length > 0) {
+          amenitiesTarget = value;
+        } else if (key === "rentRange" && value) {
+          rentRangeTarget = value;
+        }
+      }
+
+      if (searchTermTarget) {
+        results = results.filter(p => p.name.toLowerCase().includes(searchTermTarget));
+      }
+      if (bedOptionsTarget) {
+        results = results.filter(p => p.bedOptions?.includes(bedOptionsTarget));
+      }
+      // Fixed: use .every() so ALL selected amenities must match
+      if (amenitiesTarget) {
+        results = results.filter(p =>
+          amenitiesTarget.every(amenity => p.amenities?.includes(amenity))
+        );
+      }
+      if (rentRangeTarget) {
+        const [min, max] = rentRangeTarget;
+        results = results.filter(p => p.price >= min && p.price <= max);
+      }
+      if (conditions.bathroomType && conditions.bathroomType !== 'Any') {
+        results = results.filter(p => p.amenities?.includes(conditions.bathroomType));
+      }
+      if (orderByField) {
+        results = [...results].sort((a, b) =>
+          orderByField === 'rating'
+            ? (b.rating || 0) - (a.rating || 0)
+            : (b.numberOfReviews || 0) - (a.numberOfReviews || 0)
+        );
+      }
+
+      setFilteredProperties(results);
+    });
+  };
+
+  // ─── New property ─────────────────────────────────────────────────────────────
+  const handleNewProperty = async (newProperty) => {
+    // Use a UUID so IDs never collide, even for properties with similar names.
+    // A URL-friendly slug is kept separately for display purposes only.
+    const { v4: uuidv4 } = await import('uuid');
+    const id = uuidv4();
+    const propertyRef = doc(db, 'properties', id);
+    await setDoc(propertyRef, {
+      ...newProperty,
+      landlordId: user?.uid || null,
+      status: 'pending',
+      submittedAt: Date.now(),
+    });
+    return true;
+  };
+
+  // ─── Sign in ──────────────────────────────────────────────────────────────────
+  const handleSignIn = async (method = 'google', roleSelection = null, email = null, password = null) => {
+    if (method === 'google') {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await signInWithPopup(auth, provider);
+      const userRef = doc(db, "users", result.user.uid);
+      const docSnap = await getDoc(userRef);
+
+      if (!docSnap.exists()) {
+        await setDoc(userRef, {
+          name: result.user.displayName,
+          profilePicture: result.user.photoURL,
+          favorites: [],
+          role: roleSelection,
+        });
+        setUser({ ...result.user, role: roleSelection, profilePicture: result.user.photoURL });
+      } else {
+        const userData = docSnap.data();
+        const finalRole = userData.role || roleSelection;
+        if (!userData.role) {
+          await setDoc(userRef, { role: roleSelection }, { merge: true });
+        }
+        setUser({
+          ...result.user,
+          role: finalRole,
+          name: userData.name || result.user.displayName,
+          profilePicture: userData.profilePicture || result.user.photoURL,
+        });
+      }
+      setShowRoleModal(false);
+
+    } else if (method === 'email') {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const userRef = doc(db, "users", result.user.uid);
+      const docSnap = await getDoc(userRef);
+
+      if (!docSnap.exists()) {
+        await setDoc(userRef, {
+          name: result.user.email,
+          profilePicture: null,
+          favorites: [],
+          role: roleSelection,
+        });
+        setUser({ ...result.user, role: roleSelection, profilePicture: null });
+      } else {
+        const userData = docSnap.data();
+        const storedRole = userData.role;
+        setUser({
+          ...result.user,
+          role: storedRole,
+          name: userData.name || result.user.email,
+          profilePicture: userData.profilePicture || null,
+        });
+        if (storedRole && storedRole !== roleSelection) {
+          setShowRoleModal(false);
+          return storedRole;
+        }
+      }
+      setShowRoleModal(false);
+    }
+  };
+
+  // ─── Update profile (name / pfp) ──────────────────────────────────────────────
+  const handleUpdateProfile = async (updates) => {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(userRef, updates, { merge: true });
+    setUser(prev => ({ ...prev, ...updates }));
+  };
+
+  // ─── Delete account ───────────────────────────────────────────────────────────
+  const handleDeleteAccount = async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+      await deleteDoc(doc(db, 'users', currentUser.uid));
+      await deleteUser(currentUser);
+      setUser(null);
+    } catch (err) {
+      console.error('Error deleting account:', err);
+      if (err.code === 'auth/requires-recent-login') {
+        await signOut(auth);
+        setUser(null);
+        showToast('For security, please sign in again and then delete your account.');
+      } else {
+        showToast('Failed to delete account. Please try again.');
+      }
+    }
+  };
+
+  // ─── Sign out ─────────────────────────────────────────────────────────────────
+  const handleSignOut = async () => {
+    await signOut(auth);
+    setUser(null);
+    setConditions(defaultConditions);
+    fetchAndListen();
+  };
+
+  if (authLoading) return <Loading />;
+
+  return (
+    <Router>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {showRoleModal && (
+        <RoleModal
+          key={Date.now()}
+          onSignIn={handleSignIn}
+          onClose={() => setShowRoleModal(false)}
+        />
+      )}
+      <Routes>
+        <Route path="/" element={
+          <div className="App">
+            <div className="search-bar">
+              <SearchBar
+                onSearch={handleSearch}
+                user={user}
+                handleSignIn={() => setShowRoleModal(true)}
+                handleSignOut={handleSignOut}
+                conditions={conditions}
+              />
+            </div>
+            {loading ? <Loading /> : (
+              <div>
+                {filteredProperties.length > 0
+                  ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} />
+                  : <h1 className="no-properties">No properties found</h1>
+                }
+              </div>
+            )}
+            <div className="menu-container">
+              <MenuSelect user={user} />
+            </div>
+          </div>
+        } />
+        <Route path="/filter" element={<FilterPage conditions={conditions} onSearch={handleSearch} />} />
+        <Route path="/property/:id" element={
+          <PropertyDetails
+            user={user}
+            handleSignIn={() => setShowRoleModal(true)}
+            handleSignOut={handleSignOut}
+            handleSearch={() => handleSearch(conditions)}
+            showToast={showToast}
+          />
+        } />
+        <Route path="/add" element={<NewBuilding handleNewProperty={handleNewProperty} showToast={showToast} />} />
+        <Route path="/favorites" element={
+          <FavoritesComponent
+            user={user}
+            handleSearch={handleSearch}
+            handleSignIn={() => setShowRoleModal(true)}
+            handleSignOut={handleSignOut}
+            showToast={showToast}
+          />
+        } />
+        <Route path="/my-properties" element={
+          <MyProperties user={user} handleSignIn={() => setShowRoleModal(true)} showToast={showToast} />
+        } />
+        <Route path="/admin" element={<AdminPanel user={user} />} />
+        <Route path="/profile" element={
+          <ProfilePage
+            user={user}
+            handleSignIn={() => setShowRoleModal(true)}
+            handleSignOut={handleSignOut}
+            handleUpdateProfile={handleUpdateProfile}
+            handleDeleteAccount={handleDeleteAccount}
+            showToast={showToast}
+          />
+        } />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;

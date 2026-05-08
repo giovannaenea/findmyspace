@@ -1,0 +1,313 @@
+.myprops-page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding-bottom: 100px;
+}
+
+.myprops-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 12px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.myprops-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.myprops-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--teal);
+  color: var(--cream);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.myprops-add-btn:hover { background: var(--navy); }
+
+.myprops-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 8px;
+  text-align: center;
+}
+
+.myprops-empty-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.myprops-empty-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.myprops-signin-btn {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: var(--teal);
+  color: var(--cream);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.myprops-list {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.myprops-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  gap: 0;
+  transition: box-shadow 0.2s;
+}
+
+.myprops-card:hover { box-shadow: 0 4px 16px rgba(3,63,99,0.12); }
+
+.myprops-card-img-wrap {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.myprops-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.myprops-card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  min-height: 90px;
+}
+
+.myprops-status-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.myprops-status-badge.pending {
+  background: #fedc97;
+  color: #7a5c00;
+}
+
+.myprops-status-badge.approved {
+  background: rgba(40,102,110,0.12);
+  color: var(--teal);
+}
+
+.myprops-card-body {
+  padding: 12px 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.myprops-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.myprops-card-address {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.myprops-card-price {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal);
+  margin-top: 2px;
+}
+
+.myprops-card-stats {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.myprops-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.myprops-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--navy);
+  transition: all 0.15s;
+}
+
+.myprops-action-btn:hover { background: var(--bg); }
+
+.myprops-edit-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+.myprops-delete-btn { color: #a32d2d; border-color: #f7c1c1; }
+.myprops-delete-btn:hover { background: #fff1f1; }
+
+.myprops-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.myprops-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.myprops-edit-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 1px;
+}
+
+.myprops-edit-input {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--navy);
+  background: var(--bg);
+  outline: none;
+}
+
+.myprops-edit-input:focus { border-color: var(--teal); }
+
+.myprops-edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.myprops-edit-cancel {
+  flex: 1;
+  padding: 7px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.myprops-edit-save {
+  flex: 1;
+  padding: 7px;
+  border: none;
+  border-radius: 8px;
+  background: var(--teal);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--cream);
+  cursor: pointer;
+}
+
+.myprops-edit-save:disabled { opacity: 0.6; cursor: not-allowed; }
+/* ── Full edit form expansions ── */
+.myprops-card.editing {
+  flex-direction: column;
+}
+
+.myprops-edit-form .MuiFormLabel-root {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--navy) !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.myprops-edit-form .MuiFormControlLabel-label {
+  font-size: 13px !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.myprops-edit-form .MuiCheckbox-root,
+.myprops-edit-form .MuiRadio-root {
+  padding: 4px 6px !important;
+  color: var(--teal) !important;
+}
+
+.myprops-edit-form .MuiCheckbox-root.Mui-checked,
+.myprops-edit-form .MuiRadio-root.Mui-checked {
+  color: var(--teal) !important;
+}
+
+/* When editing, card stacks vertically so form gets full width */
+.myprops-card:has(.myprops-edit-form) {
+  flex-direction: column;
+}
+
+.myprops-card:has(.myprops-edit-form) .myprops-card-img-wrap {
+  width: 100%;
+  height: 160px;
+}
+
+.myprops-card:has(.myprops-edit-form) .myprops-card-body {
+  padding: 16px;
+}
+
+.myprops-edit-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

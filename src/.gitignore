@@ -1,0 +1,14 @@
+# Environment variables — never commit these
+.env.local
+.env.*.local
+
+# Firebase service account keys — never commit these
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/

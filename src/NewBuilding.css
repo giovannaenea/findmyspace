@@ -1,0 +1,175 @@
+.new-building-page-container {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.new-building-container {
+  padding: 16px 16px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Text fields — no card wrapper, just clean inputs */
+.new-building-container .MuiTextField-root {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+}
+
+/* Section cards for checkboxes, radios, sliders */
+.new-building-container .MuiFormControl-root {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  padding: 12px 14px;
+}
+
+/* Remove double padding on text fields */
+.new-building-container .MuiTextField-root .MuiOutlinedInput-root {
+  padding: 0;
+}
+
+.new-building-container .MuiInputBase-input {
+  font-family: 'DM Sans', sans-serif !important;
+  color: var(--navy);
+  font-size: 14px;
+  padding: 12px 14px !important;
+}
+
+.new-building-container .MuiInputLabel-root {
+  font-family: 'DM Sans', sans-serif !important;
+  color: var(--text-muted) !important;
+  font-size: 14px;
+}
+
+.new-building-container .MuiInputLabel-root.Mui-focused {
+  color: var(--teal) !important;
+}
+
+.new-building-container .MuiFormLabel-root {
+  font-family: 'DM Sans', sans-serif !important;
+  color: var(--navy) !important;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+
+.new-building-container .MuiFormControlLabel-label {
+  font-family: 'DM Sans', sans-serif !important;
+  color: var(--navy) !important;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.new-building-container .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.new-building-container .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
+.new-building-container .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--teal) !important;
+}
+
+.new-building-container .MuiCheckbox-root,
+.new-building-container .MuiRadio-root {
+  color: var(--sage) !important;
+  padding: 4px 8px !important;
+}
+
+.new-building-container .MuiCheckbox-root.Mui-checked,
+.new-building-container .MuiRadio-root.Mui-checked {
+  color: var(--teal) !important;
+}
+
+.new-building-container .MuiFormGroup-root {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.new-building-container .MuiSlider-root {
+  color: var(--teal) !important;
+}
+
+.new-building-container .MuiButton-root {
+  font-family: 'DM Sans', sans-serif !important;
+  font-weight: 700 !important;
+  border-radius: var(--radius-md) !important;
+  text-transform: none !important;
+  background: var(--teal) !important;
+  color: var(--cream) !important;
+  padding: 13px 20px !important;
+  font-size: 14px !important;
+  box-shadow: none !important;
+  transition: background 0.2s !important;
+  width: 100% !important;
+}
+
+.new-building-container .MuiButton-root:hover {
+  background: var(--navy) !important;
+}
+
+.name-error {
+  color: #e53e3e;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: -6px;
+  padding: 0 4px;
+}
+/* ── Plain input fields (replacing MUI TextField) ── */
+.nb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nb-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.nb-input {
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--navy);
+  background: var(--white);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s;
+}
+
+.nb-input:focus { border-color: var(--teal); }
+.nb-input-error { border-color: #e53e3e !important; }
+
+.nb-error {
+  font-size: 11px;
+  color: #e53e3e;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+}
+
+.nb-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+}
