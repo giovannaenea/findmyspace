@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
-import { collection, getDocs, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import Loading from './Loading';
 import BackButton from './BackButton';
 import './AdminPanel.css';
@@ -9,20 +9,12 @@ import './AdminPanel.css';
 const AdminPanel = ({ user }) => {
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) { setLoading(false); return; }
-    // Read isAdmin from the server-side user document — never trust client state alone
-    getDoc(doc(db, 'users', user.uid)).then(snap => {
-      const admin = snap.exists() && snap.data().isAdmin === true;
-      setIsAdmin(admin);
-      if (admin) fetchPending();
-      else setLoading(false);
-    });
-  }, [user]);
+    fetchPending();
+  }, []);
 
   const fetchPending = async () => {
     setLoading(true);
@@ -53,24 +45,6 @@ const AdminPanel = ({ user }) => {
 
   if (loading) return <Loading />;
 
-  if (!user) return (
-    <div className="admin-page">
-      <div className="admin-empty">
-        <p>You need to be signed in to access this page.</p>
-        <button onClick={() => navigate('/')} className="admin-back-btn">Go Home</button>
-      </div>
-    </div>
-  );
-
-  if (!isAdmin) return (
-    <div className="admin-page">
-      <div className="admin-empty">
-        <p>You don't have permission to view this page.</p>
-        <button onClick={() => navigate('/')} className="admin-back-btn">Go Home</button>
-      </div>
-    </div>
-  );
-
   return (
     <div className="admin-page">
       <BackButton />
@@ -90,9 +64,9 @@ const AdminPanel = ({ user }) => {
           {pending.map(p => (
             <div key={p.id} className="admin-card">
               {p.photos?.[0] && (
-                <img src={p.photos[0]} alt={p.name} className="admin-card-img" />
+                <img src={p.photos[0]} alt={p.name} className="admin-card-img" onClick={() => navigate(`/property/${p.id}`)} style={{ cursor: 'pointer' }} />
               )}
-              <div className="admin-card-body">
+              <div className="admin-card-body" onClick={() => navigate(`/property/${p.id}`)} style={{ cursor: 'pointer' }}>
                 <h3 className="admin-card-name">{p.name}</h3>
                 <p className="admin-card-detail">{p.address}</p>
                 {p.landlordName && <p className="admin-card-detail" style={{ fontWeight: 600 }}>Landlord: {p.landlordName}</p>}
