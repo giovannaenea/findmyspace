@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
-import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc, updateDoc, query, where } from 'firebase/firestore';
 import { Checkbox, FormControl, FormControlLabel, FormLabel, FormGroup, Radio, RadioGroup } from '@mui/material';
 import ImageUrlInput from './ImageURLInput';
 import MenuSelect from './MenuSelect';
@@ -17,6 +17,15 @@ const amenityOptions = [
 ];
 
 const MyProperties = ({ user, handleSignIn, showToast }) => {
+  const navigate = useNavigate();
+
+  // Role guard — tenants have no listings; redirect them home
+  useEffect(() => {
+    if (user && user.role !== 'landlord') {
+      navigate('/', { replace: true });
+    }
+  }, [user]);
+
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
@@ -39,8 +48,6 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
   const [editLat, setEditLat] = useState('');
   const [editLng, setEditLng] = useState('');
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (user) fetchMyProperties();
     else setLoading(false);
@@ -49,9 +56,9 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
   const fetchMyProperties = async () => {
     setLoading(true);
     try {
-      const snap = await getDocs(collection(db, 'properties'));
-      const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      setProperties(all.filter(p => p.landlordId === user.uid));
+      const q = query(collection(db, 'properties'), where('landlordId', '==', user.uid));
+      const snap = await getDocs(q);
+      setProperties(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (err) {
       console.error(err);
       showToast?.('Failed to load listings. Please try again.');

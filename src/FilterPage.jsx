@@ -45,6 +45,7 @@ const FilterPage = ({ conditions, onSearch }) => {
       orderBy: 'All',
       amenities: [],
       rentRange: [1000, 30000],
+      bathroomType: 'Any',
     };
     setRentRange([1000, 30000]);
     setBedOptions('All');

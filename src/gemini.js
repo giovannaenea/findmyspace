@@ -1,7 +1,9 @@
-// Your Cloudflare Worker URL — replace with your actual worker URL after deploying
 const WORKER_URL = import.meta.env.VITE_GEMINI_WORKER_URL;
 
 const callGemini = async (prompt, temperature = 0.7) => {
+  if (!WORKER_URL) {
+    throw new Error('VITE_GEMINI_WORKER_URL is not set. Add it to your .env file.');
+  }
   const response = await fetch(WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -20,22 +22,35 @@ const callGemini = async (prompt, temperature = 0.7) => {
 
 // Summarize reviews for a property
 export const summarizeReviews = async (reviews) => {
-  const reviewTexts = reviews
-    .map(r => `Rating: ${r.rating}/5 — ${r.description || r.comment || ''}`)
+  // Only use reviews that actually have written text — rating-only entries
+  // give the model nothing to work with and cause hallucination
+  const writtenReviews = reviews.filter(r => {
+    const text = (r.description || r.comment || '').trim();
+    return text.length > 0;
+  });
+
+  if (writtenReviews.length === 0) {
+    return 'No written reviews yet — ratings only, nothing to summarize.';
+  }
+
+  const reviewTexts = writtenReviews
+    .map(r => `Rating: ${r.rating}/5 — ${(r.description || r.comment).trim()}`)
     .join('\n');
 
   const prompt = `You are an assistant for 'FindMySpace', a student housing app near NDHU in Taiwan.
-Summarize these tenant reviews for a rental property.
+Summarize ONLY what tenants actually wrote in the reviews below. Do NOT invent, assume, or add anything not explicitly stated.
+If the reviews don't mention a pro or a con, write "Not mentioned" for that field.
+
 Format your response exactly as:
-Overall Vibe: [one short sentence]
-• Pro: [one thing tenants liked]
-• Con: [one thing tenants disliked]
+Overall Vibe: [one short sentence based only on what is written]
+• Pro: [one thing tenants explicitly liked, or "Not mentioned"]
+• Con: [one thing tenants explicitly disliked, or "Not mentioned"]
 Max 60 words total.
 
 Reviews:
 ${reviewTexts}`;
 
-  return await callGemini(prompt, 0.4);
+  return await callGemini(prompt, 0.2);
 };
 
 // Recommend properties based on user's saved listings

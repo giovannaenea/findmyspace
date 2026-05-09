@@ -107,9 +107,9 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
   const navigate = useNavigate();
   const handleAddClick = () => {
     if (!user) {
-      handleSignIn((signInSuccess) => {
-        if (signInSuccess) { navigate('/add'); }
-      });
+      // Store the intended destination so App.jsx can redirect after sign-in
+      sessionStorage.setItem('postSignInNav', '/add');
+      handleSignIn();
     } else {
       navigate('/add');
     }
@@ -131,7 +131,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
     <div className="navbar">
       {/* Top bar */}
       <div className="navbar-top">
-        <span className="navbar-logo">Zhixue Housing</span>
+        <span className="navbar-logo">FindMySpace</span>
         <div className="navbar-actions">
           {user?.role === 'landlord' && (
             <Tooltip title="Add new building">

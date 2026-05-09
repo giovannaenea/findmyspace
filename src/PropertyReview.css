@@ -91,11 +91,16 @@
 
 .property-card-address {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px;
   font-size: 12px;
   color: var(--text-secondary);
   margin-bottom: 8px;
+}
+
+.property-card-address svg {
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
 .property-card-meta {

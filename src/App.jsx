@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import { db, auth } from './firebase.mjs'
 import { collection, doc, setDoc, getDoc, getDocs, deleteDoc } from "firebase/firestore";
@@ -20,6 +20,19 @@ import AdminPanel from './AdminPanel';
 import Toast from './Toast';
 import './App.css';
 
+// Handles post-sign-in redirects that originate outside the Router tree
+// (e.g. the Add button in SearchBar sets sessionStorage before the modal opens)
+function PendingNavigator({ pendingNav, onDone }) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (pendingNav) {
+      navigate(pendingNav);
+      onDone();
+    }
+  }, [pendingNav]);
+  return null;
+}
+
 function App() {
   const defaultConditions = {
     searchTerm: '',
@@ -37,6 +50,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [toast, setToast] = useState(null);
+  const [pendingNav, setPendingNav] = useState(null);
 
   const showToast = useCallback((message, type = 'error') => {
     setToast({ message, type });
@@ -194,6 +208,8 @@ function App() {
         });
       }
       setShowRoleModal(false);
+      const nav = sessionStorage.getItem('postSignInNav');
+      if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
 
     } else if (method === 'email') {
       const result = await signInWithEmailAndPassword(auth, email, password);
@@ -219,10 +235,14 @@ function App() {
         });
         if (storedRole && storedRole !== roleSelection) {
           setShowRoleModal(false);
+          const nav = sessionStorage.getItem('postSignInNav');
+          if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
           return storedRole;
         }
       }
       setShowRoleModal(false);
+      const nav = sessionStorage.getItem('postSignInNav');
+      if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
     }
   };
 
@@ -266,6 +286,7 @@ function App() {
 
   return (
     <Router>
+      <PendingNavigator pendingNav={pendingNav} onDone={() => setPendingNav(null)} />
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       {showRoleModal && (
         <RoleModal

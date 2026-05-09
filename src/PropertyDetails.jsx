@@ -35,7 +35,8 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
         return;
       }
 
-      const data = { id, ...docSnap.data() };
+      const raw = docSnap.data();
+      const data = { id, ...raw, reviews: raw.reviews ?? [] };
       setProperty(data);
 
       if (data.landlordId) {
@@ -305,8 +306,8 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
           )}
         </div>
 
-        {/* AI Review Summary */}
-        {property.reviews?.length > 0 && (
+        {/* AI Review Summary — only shown when at least one review has written text */}
+        {property.reviews?.some(r => (r.description || r.comment || '').trim().length > 0) && (
           <div className="detail-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: aiSummary ? 12 : 0 }}>
               <h3 className="detail-card-title" style={{ margin: 0 }}>AI Review Summary</h3>

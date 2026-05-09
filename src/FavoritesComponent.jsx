@@ -8,7 +8,7 @@ import MenuSelect from './MenuSelect';
 import Loading from './Loading';
 import './FavoritesComponent.css';
 
-const FavoritesComponent = ({ user, handleSearch, handleSignIn }) => {
+const FavoritesComponent = ({ user, handleSearch, handleSignIn, showToast }) => {
   const [loading, setLoading] = useState(true);
   const [properties, setProperties] = useState([]);
   const [allProperties, setAllProperties] = useState([]);
@@ -33,6 +33,7 @@ const FavoritesComponent = ({ user, handleSearch, handleSignIn }) => {
       setProperties(approved.filter(p => userFavorites.includes(p.id)));
     } catch (e) {
       console.error(e);
+      showToast?.('Failed to load saved properties. Please try again.');
     } finally {
       setLoading(false);
     }
