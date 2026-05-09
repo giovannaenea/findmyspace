@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Slider } from '@mui/material';
 import './FilterPage.css';
 
+// FIX: was 'Washer & Dryer' as a single entry — that string doesn't exist in
+// the property data or SearchBar, so filtering for it never matched anything.
+// Split into 'Washer' and 'Dryer' to match everywhere else.
 const amenityOptions = [
-  'Furniture', 'Private Bathroom', 'Shared Bathroom', 'Washer & Dryer',
+  'Furniture', 'Private Bathroom', 'Shared Bathroom', 'Washer', 'Dryer',
   'Pets Allowed', 'Water Dispenser', 'Refrigerator', 'Parking',
   'Laundry Room', 'AC', 'Cooking Allowed',
 ];
@@ -29,7 +32,7 @@ const FilterPage = ({ conditions, onSearch }) => {
       ...conditions,
       rentRange,
       bedOptions,
-      amenities,   // pass the full array — App.jsx uses .every() now
+      amenities,
       orderBy,
     });
     navigate('/');

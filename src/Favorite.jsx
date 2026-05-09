@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { db } from './firebase.mjs';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const BookmarkFilled = () => (
   <svg viewBox="0 0 14 14" fill="#033F63" stroke="#033F63" strokeLinecap="round" strokeLinejoin="round" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
@@ -12,48 +14,41 @@ const BookmarkEmpty = () => (
   </svg>
 );
 
-import { db } from './firebase'
-import { doc, setDoc, getDoc } from "firebase/firestore";
-
 const Favorite = ({ userId, propertyId }) => {
-    const [isFavorited, setIsFavorited] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
 
-    useEffect(() => {
-        const checkIfFavorited = async () => {
-            if (!userId) return false;
-            const userRef = doc(db, "users", userId);
-            const docSnap = await getDoc(userRef);
-            
-            return docSnap.exists() && docSnap.data().favorites && docSnap.data().favorites.includes(propertyId);
-        };
+  useEffect(() => {
+    const checkIfFavorited = async () => {
+      if (!userId) return false;
+      const userRef = doc(db, 'users', userId);
+      const docSnap = await getDoc(userRef);
+      return docSnap.exists() && docSnap.data().favorites?.includes(propertyId);
+    };
 
-        checkIfFavorited().then(favorited => {
-            setIsFavorited(favorited)
-        });
-    }, [userId, propertyId]);
+    checkIfFavorited().then(favorited => setIsFavorited(favorited));
+  }, [userId, propertyId]);
 
-    const handleFavoriteClick = async () => {
-        if (!userId) return;
-        const userRef = doc(db, "users", userId);
-        const docSnap = await getDoc(userRef);
-        const favorites = docSnap.data().favorites;
-      
-        if (!isFavorited) {
-            // add to favorites
-            await setDoc(userRef, { favorites: [...favorites, propertyId] }, { merge: true });
-            setIsFavorited(true);
-        } else {
-            // remove from favorites
-            await setDoc(userRef, { favorites: favorites.filter(id => id != propertyId) }, { merge: true });
-            setIsFavorited(false);
-        }
-      };
+  const handleFavoriteClick = async () => {
+    if (!userId) return;
+    const userRef = doc(db, 'users', userId);
+    const docSnap = await getDoc(userRef);
+    // FIX: guard against missing favorites field (e.g. email-registered users)
+    const favorites = docSnap.data().favorites || [];
 
-    return (
-        <div className="favorite-icon" onClick={handleFavoriteClick}>
-            {isFavorited ? <BookmarkFilled /> : <BookmarkEmpty />}
-        </div>
-    );
+    if (!isFavorited) {
+      await setDoc(userRef, { favorites: [...favorites, propertyId] }, { merge: true });
+      setIsFavorited(true);
+    } else {
+      await setDoc(userRef, { favorites: favorites.filter(id => id !== propertyId) }, { merge: true });
+      setIsFavorited(false);
+    }
+  };
+
+  return (
+    <div className="favorite-icon" onClick={handleFavoriteClick}>
+      {isFavorited ? <BookmarkFilled /> : <BookmarkEmpty />}
+    </div>
+  );
 };
 
 export default Favorite;

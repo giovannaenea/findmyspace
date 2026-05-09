@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
 import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
-import { getRecommendations } from './gemini';
+import { getRecommendations } from './gemini.js';
 import PropertyReview from './PropertyReview';
 import MenuSelect from './MenuSelect';
 import Loading from './Loading';
@@ -14,6 +15,7 @@ const FavoritesComponent = ({ user, handleSearch, handleSignIn }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [recLoading, setRecLoading] = useState(false);
   const [recError, setRecError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) fetchFavorites();
@@ -121,7 +123,7 @@ const FavoritesComponent = ({ user, handleSearch, handleSignIn }) => {
             {recommendations.length > 0 && (
               <div className="rec-list">
                 {recommendations.map((prop, i) => (
-                  <div key={prop.id} className="rec-card">
+                  <div key={prop.id} className="rec-card" onClick={() => navigate(`/property/${prop.id}`)}>
                     <span className="rec-rank">#{i + 1}</span>
                     {prop.photos?.[0] && (
                       <img src={prop.photos[0]} alt={prop.name} className="rec-img" />

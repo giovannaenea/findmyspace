@@ -5,6 +5,8 @@ import './ImageSlider.css'; // Importing CSS for the image slider
 const ImageSlider = ({ images, user, propertyId }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  if (!images || images.length === 0) return null;
+
   const nextImage = () => {
     setCurrentImageIndex((currentImageIndex + 1) % images.length);
   };
@@ -15,7 +17,7 @@ const ImageSlider = ({ images, user, propertyId }) => {
 
   return (
     <div className="slider-container">
-      {images && images.map((image, index) => (
+      {images.map((image, index) => (
         <img
           key={image}
           src={image}
@@ -24,8 +26,12 @@ const ImageSlider = ({ images, user, propertyId }) => {
         />
       ))}
       { user && <Favorite userId={user.uid} propertyId={propertyId}/> }
-      <button className="arrow prev" onClick={prevImage}>&#10094;</button>
-      <button className="arrow next" onClick={nextImage}>&#10095;</button>
+      {images.length > 1 && (
+        <>
+          <button className="arrow prev" onClick={prevImage}>&#10094;</button>
+          <button className="arrow next" onClick={nextImage}>&#10095;</button>
+        </>
+      )}
     </div>
   );
 };

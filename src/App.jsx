@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import { db, auth } from './firebase.mjs'
 import { collection, doc, setDoc, getDoc, getDocs, deleteDoc } from "firebase/firestore";
@@ -54,6 +54,7 @@ function App() {
           role: userData.role || null,
           name: userData.name || firebaseUser.displayName,
           profilePicture: userData.profilePicture || firebaseUser.photoURL,
+          isAdmin: userData.isAdmin === true,
         });
       } else {
         setUser(null);
@@ -321,7 +322,9 @@ function App() {
         <Route path="/my-properties" element={
           <MyProperties user={user} handleSignIn={() => setShowRoleModal(true)} showToast={showToast} />
         } />
-        <Route path="/admin" element={<AdminPanel user={user} />} />
+        <Route path="/admin" element={
+          authLoading ? <Loading /> : user?.isAdmin ? <AdminPanel user={user} /> : <Navigate to="/" replace />
+        } />
         <Route path="/profile" element={
           <ProfilePage
             user={user}
