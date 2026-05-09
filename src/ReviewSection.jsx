@@ -43,7 +43,7 @@ const Review = ({ user, handleSignIn, rating, reviews, handleNewReview }) => {
     return (
       <div className="review-layout">
         <div className="rating-box">
-          <div className="rating-score">{rating}</div>
+          <div className="rating-score">{rating?.toFixed(1)}</div>
           <div className="rating-description">{ratingText}</div>
           <div className="rating-out-of">Out of 5</div>
         </div>

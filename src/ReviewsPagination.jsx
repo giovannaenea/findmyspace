@@ -27,26 +27,18 @@ const ReviewsPagination = ({ user, property, handleDeleteReview, handleReply }) 
   };
 
   const getSortedReviews = () => {
-    const sortedReviews = property.reviews;
-
+    const sortedReviews = [...property.reviews];
     sortedReviews.sort((a, b) => {
-      if (sortOrder === 'newest') {
-        return new Date(b.date) - new Date(a.date); // Sort by date
-      } else if (sortOrder === 'oldest') {
-        return new Date(a.date) - new Date(b.date); // Sort by date
-      } else if (sortOrder === 'highestRating') {
-        return b.rating - a.rating; // Sort by rating
-      } else if (sortOrder === 'lowestRating') {
-        return a.rating - b.rating; // Sort by rating
-      } else {
-        return b.upvotes - a.upvotes; // Sort by upvotes
-      }
+      if (sortOrder === 'newest') return new Date(b.date) - new Date(a.date);
+      if (sortOrder === 'oldest') return new Date(a.date) - new Date(b.date);
+      if (sortOrder === 'highestRating') return b.rating - a.rating;
+      if (sortOrder === 'lowestRating') return a.rating - b.rating;
+      return b.upvotes - a.upvotes;
     });
-
     return sortedReviews;
   };
 
-  const reviewOffset = (page - 1) * 10
+  const reviewOffset = (page - 1) * 10;
   const sortedReviews = getSortedReviews();
   const currentReviews = sortedReviews.slice(reviewOffset, reviewOffset + 10);
 
@@ -57,8 +49,8 @@ const ReviewsPagination = ({ user, property, handleDeleteReview, handleReply }) 
   return (
     <div className="reviews-list">
       <div className="sort-by">
-        <label>{"Sort by:"}</label>
-        <select className="dropdown" value={sortOrder} onChange={ (e) => setSortOrder(e.target.value) }>
+        <label>Sort by:</label>
+        <select className="dropdown" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
           {sortOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -66,16 +58,26 @@ const ReviewsPagination = ({ user, property, handleDeleteReview, handleReply }) 
           ))}
         </select>
       </div>
-      { currentReviews.map((review) => <ReviewItem key={review.id} user={user} review={review} handleDeleteReview={handleDeleteReview} handleReply={handleReply} propertyId={property.id} />) }
-      <Pagination
-          count={Math.ceil(property.reviews.length / 10)}
-          size="large"
-          page={page}
-          onChange={(event, value) => setPage(value)}
-          style = {{ margin: '20px 0px' }}
+      {currentReviews.map((review) => (
+        <ReviewItem
+          key={review.id}
+          user={user}
+          review={review}
+          handleDeleteReview={handleDeleteReview}
+          handleReply={handleReply}
+          propertyId={property.id}
+          propertyLandlordId={property.landlordId}
         />
+      ))}
+      <Pagination
+        count={Math.ceil(property.reviews.length / 10)}
+        size="large"
+        page={page}
+        onChange={(event, value) => setPage(value)}
+        style={{ margin: '20px 0px' }}
+      />
     </div>
   );
-}
+};
 
 export default ReviewsPagination;

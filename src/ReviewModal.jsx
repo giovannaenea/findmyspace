@@ -16,6 +16,8 @@ const CHECK_CATEGORIES = [
   { key: 'landlord', label: 'Landlord Treatment' },
 ];
 
+const ANON_AVATAR = 'https://cdn.vectorstock.com/i/preview-1x/28/63/profile-placeholder-image-gray-silhouette-vector-21542863.jpg';
+
 const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) => {
   const [anonymous, setAnonymous] = useState(false);
   const [description, setDescription] = useState('');
@@ -28,13 +30,16 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
 
   const isValid = rating >= 1 && description.trim().length > 0;
 
+  // FIX #6: prefer the custom name/profilePicture set in the Firestore user doc
+  // (stored on the user object in App.jsx) over the raw Firebase Auth fields.
+  const displayName = user?.name || user?.displayName;
+  const avatarSrc  = user?.profilePicture || user?.photoURL;
+
   const handleSubmit = () => {
     const newReview = {
       id: uuidv4(),
-      name: anonymous ? 'Anonymous' : user.displayName,
-      profilePicture: anonymous
-        ? 'https://cdn.vectorstock.com/i/preview-1x/28/63/profile-placeholder-image-gray-silhouette-vector-21542863.jpg'
-        : user.photoURL,
+      name: anonymous ? 'Anonymous' : displayName,
+      profilePicture: anonymous ? ANON_AVATAR : avatarSrc,
       rating,
       description,
       checks,
@@ -78,13 +83,13 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
           {/* Reviewer name toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <img
-              src={anonymous ? 'https://cdn.vectorstock.com/i/preview-1x/28/63/profile-placeholder-image-gray-silhouette-vector-21542863.jpg' : user?.photoURL}
+              src={anonymous ? ANON_AVATAR : (avatarSrc || ANON_AVATAR)}
               alt=""
               style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border)' }}
             />
             <div style={{ flex: 1 }}>
               <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--navy)' }}>
-                {anonymous ? 'Anonymous' : user?.displayName}
+                {anonymous ? 'Anonymous' : displayName}
               </p>
               <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>Reviewing as</p>
             </div>

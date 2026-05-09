@@ -12,7 +12,8 @@ const CHECK_CATEGORIES = [
   { key: 'landlord', label: 'Landlord Treatment' },
 ];
 
-const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId }) => {
+// FIX: added propertyLandlordId prop so we can check ownership
+const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId, propertyLandlordId }) => {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [replyText, setReplyText] = useState(review.landlordReply || '');
   const [upvoted, setUpvoted] = useState(false);
@@ -58,6 +59,9 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId 
   const activeChecks = review.checks
     ? CHECK_CATEGORIES.filter(c => review.checks[c.key])
     : [];
+
+  // FIX: only show Reply button if the logged-in user is THIS property's landlord
+  const isPropertyLandlord = user?.role === 'landlord' && user?.uid === propertyLandlordId;
 
   return (
     <div className="review-item">
@@ -118,7 +122,7 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId 
             </svg>
           </button>
         )}
-        {user?.role === 'landlord' && (
+        {isPropertyLandlord && (
           <button
             className="reply-btn"
             onClick={() => setShowReplyBox(!showReplyBox)}
@@ -144,7 +148,7 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId 
         </div>
       )}
 
-      {/* Reply input box for landlords */}
+      {/* Reply input box */}
       {showReplyBox && (
         <div className="reply-box">
           <textarea
