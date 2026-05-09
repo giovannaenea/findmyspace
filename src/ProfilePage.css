@@ -405,3 +405,59 @@
 
 .profile-delete-confirm-btn:hover:not(:disabled) { background: #c53030; }
 .profile-delete-confirm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+/* ── Photo preview ── */
+.pfp-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.pfp-preview-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.pfp-preview-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.pfp-preview-actions .profile-delete-cancel {
+  flex: 1;
+  padding: 10px;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.pfp-preview-actions .profile-save-btn {
+  flex: 1;
+}
+
+.pfp-cancel-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  padding: 4px 10px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.pfp-cancel-btn:hover {
+  border-color: #e53e3e;
+  color: #e53e3e;
+}
