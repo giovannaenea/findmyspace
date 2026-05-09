@@ -181,7 +181,7 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
                 {property.address}
               </p>
             )}
-            <p className="detail-address">{property.address}</p>
+
             <button
               className="detail-maps-link"
               onClick={() => window.open(`https://www.google.com/maps?q=${property.lat},${property.lng}`, '_blank')}
