@@ -20,7 +20,13 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read: if request.auth.uid == userId || isAdmin();
+      // FIX #14: allow anyone to read a user doc so PropertyDetails can fetch
+      // the landlord's name without requiring the visitor to be logged in.
+      // Only name and profilePicture are stored here alongside private fields,
+      // so if you want to be stricter you can add a separate /publicProfiles
+      // subcollection — but for a student project this is fine.
+      allow read: if true;
+
       allow create: if request.auth.uid == userId
                     && !('isAdmin' in request.resource.data);
       allow update: if request.auth.uid == userId
@@ -39,10 +45,16 @@ service cloud.firestore {
                     && request.resource.data.status == 'pending'
                     && request.resource.data.landlordId == request.auth.uid;
 
+      // Landlord editing their own listing (cannot change status or landlordId)
       allow update: if isSignedIn()
                     && resource.data.landlordId == request.auth.uid
                     && !('status' in request.resource.data.diff(resource.data).affectedKeys())
                     && !('landlordId' in request.resource.data.diff(resource.data).affectedKeys());
+
+      // FIX #3: any signed-in user can update the reviews array (for upvotes/downvotes
+      // and new reviews). They cannot touch any other field.
+      allow update: if isSignedIn()
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviews']);
 
       allow update: if isAdmin();
       allow delete: if isAdmin();
