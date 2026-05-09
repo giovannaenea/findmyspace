@@ -8,7 +8,15 @@ import { db } from './firebase.mjs';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import './NewBuilding.css';
 
-const NewBuilding = ({ handleNewProperty, showToast }) => {
+const NewBuilding = ({ handleNewProperty, showToast, user }) => {
+  const navigate = useNavigate();
+
+  // Role guard — only landlords can add listings
+  useEffect(() => {
+    if (!user || user.role !== 'landlord') {
+      navigate('/', { replace: true });
+    }
+  }, [user]);
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [address, setAddress] = useState('');
@@ -31,7 +39,6 @@ const NewBuilding = ({ handleNewProperty, showToast }) => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [attempted, setAttempted] = useState(false);
-  const navigate = useNavigate();
 
   const bedOptions = ['1 Bedroom', '2 Bedrooms', '3+ Bedrooms'];
   const amenityOptions = [

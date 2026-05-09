@@ -330,7 +330,7 @@ function App() {
             showToast={showToast}
           />
         } />
-        <Route path="/add" element={<NewBuilding handleNewProperty={handleNewProperty} showToast={showToast} />} />
+        <Route path="/add" element={<NewBuilding handleNewProperty={handleNewProperty} showToast={showToast} user={user} />} />
         <Route path="/favorites" element={
           <FavoritesComponent
             user={user}

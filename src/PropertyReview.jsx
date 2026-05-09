@@ -27,6 +27,7 @@ const PropertyReview = ({ id, name, rating, address, price, bedOptions, walkingT
 
   const handleClick = () => {
     if (!user) {
+      sessionStorage.setItem('postSignInNav', `/property/${id}`);
       handleSignIn();
     } else {
       navigate(`/property/${id}`);
