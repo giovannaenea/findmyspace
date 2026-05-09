@@ -5,10 +5,10 @@ import ImageUrlInput from './ImageURLInput';
 import Loading from './Loading';
 import BackButton from './BackButton';
 import { db } from './firebase.mjs';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import './NewBuilding.css';
 
-const NewBuilding = ({ handleNewProperty }) => {
+const NewBuilding = ({ handleNewProperty, showToast }) => {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState('');
   const [address, setAddress] = useState('');
@@ -23,6 +23,7 @@ const NewBuilding = ({ handleNewProperty }) => {
   const [lng, setLng] = useState('');
   const [latError, setLatError] = useState('');
   const [lngError, setLngError] = useState('');
+  const [walkingTime, setWalkingTime] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
   const [uploadingCount, setUploadingCount] = useState(0);
   const [amenities, setAmenities] = useState([]);
@@ -66,9 +67,9 @@ const NewBuilding = ({ handleNewProperty }) => {
     const val = e.target.value;
     setName(val);
     if (!val) { setNameError(''); return; }
-    const id = val.toLowerCase().replace(/\s+/g, '-');
-    const snap = await getDoc(doc(db, 'properties', id));
-    setNameError(snap.exists() ? 'A property with this name already exists.' : '');
+    const q = query(collection(db, 'properties'), where('name', '==', val.trim()));
+    const snap = await getDocs(q);
+    setNameError(!snap.empty ? 'A property with this name already exists.' : '');
   };
 
   const handlePhoneChange = (e) => {
@@ -117,6 +118,7 @@ const NewBuilding = ({ handleNewProperty }) => {
         photos: imageUrls,
         lat: lat ? parseFloat(lat) : null,
         lng: lng ? parseFloat(lng) : null,
+        walkingTime: walkingTime ? parseInt(walkingTime) : 0,
         rating: 0,
         numberOfReviews: 0,
         reviews: [],
@@ -127,10 +129,11 @@ const NewBuilding = ({ handleNewProperty }) => {
       if (success) {
         setSubmitted(true);
       } else {
-        setNameError('A property with this name already exists.');
+        showToast?.('Failed to submit listing. Please try again.');
       }
     } catch (err) {
       console.error('Submit error:', err);
+      showToast?.('Failed to submit listing. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -210,6 +213,18 @@ const NewBuilding = ({ handleNewProperty }) => {
             <p className="nb-hint">
               Find coordinates: open Google Maps → right-click your property location → click the coordinates shown at the top to copy them
             </p>
+          </div>
+
+          <div className="nb-field">
+            <label className="nb-label">Walking Time to Campus (minutes)</label>
+            <input
+              className="nb-input"
+              value={walkingTime}
+              onChange={e => setWalkingTime(e.target.value.replace(/\D/g, ''))}
+              placeholder="e.g. 10"
+              inputMode="numeric"
+            />
+            <p className="nb-hint">Optional — shown on the listing as walking distance to NDHU</p>
           </div>
 
           <div className="nb-field">
