@@ -150,7 +150,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
 
       {/* Hero + Search */}
       <div className="navbar-hero">
-        <h1 className="hero-title">Find your home</h1>
+        <h1 className="hero-title">Live comfortably</h1>
         <p className="hero-subtitle">Near National Dong Hwa University</p>
         <div className="search-row">
           <div className="search-box">

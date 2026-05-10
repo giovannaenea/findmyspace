@@ -7,7 +7,7 @@ const GoogleSignInButton = ({ user, handleSignIn, handleSignOut }) => {
       {user ? (
         <button className="signout-btn" onClick={handleSignOut}>Sign Out</button>
       ) : (
-        <button className="signin-btn" onClick={handleSignIn}>Create Account</button>
+        <button className="signin-btn" onClick={handleSignIn}>Get Started</button>
       )}
     </div>
   );
