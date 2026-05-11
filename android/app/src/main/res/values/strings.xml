@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">findmyspace</string>
-    <string name="title_activity_main">findmyspace</string>
+    <string name="app_name">FindMySpace</string>
+    <string name="title_activity_main">FindMySpace</string>
     <string name="package_name">com.findmyspace.app</string>
     <string name="custom_url_scheme">com.findmyspace.app</string>
 </resources>

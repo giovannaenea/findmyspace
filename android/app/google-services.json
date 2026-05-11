@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1010541095008-gq145cjm8an851kfdclg1apv1qnbgovn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.findmyspace.app",
+            "certificate_hash": "d692e161c96eae5a56358ff601b9dc99da42a7b8"
+          }
+        },
+        {
           "client_id": "1010541095008-veb3j9r28hk6eeoscjtog6orqnsba3t2.apps.googleusercontent.com",
           "client_type": 3
         }
