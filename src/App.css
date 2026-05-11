@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+/* ── Fonts (local fallback stack — no CDN needed) ── */
+/* DM Sans is loaded via @fontsource/dm-sans — run: npm install @fontsource/dm-sans */
+/* The import below is added in index.jsx instead */
 
 :root {
   --navy: #033f63;
@@ -18,7 +20,6 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
-
 }
 
 * {
@@ -37,6 +38,11 @@ body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
+  /* Safe area insets for notch and home bar on mobile */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 button {
@@ -51,9 +57,11 @@ input, textarea, select {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
 .menu-container {
   position: fixed;
   bottom: 0;
+  bottom: env(safe-area-inset-bottom, 0px);
   left: 50%;
   transform: translateX(-50%);
   width: 100%;

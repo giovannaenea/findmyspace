@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1010541095008",
+    "project_id": "find-my-space-e4871",
+    "storage_bucket": "find-my-space-e4871.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010541095008:android:bb5731cd3cd670dd2ffb05",
+        "android_client_info": {
+          "package_name": "com.findmyspace.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1010541095008-veb3j9r28hk6eeoscjtog6orqnsba3t2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAu9vaYq4zia-6yb6CNoFfaEleg0RTwQJ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1010541095008-veb3j9r28hk6eeoscjtog6orqnsba3t2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,11 +10,13 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@capacitor-firebase/authentication": "^8.2.0",
     "@capacitor/android": "^8.3.3",
-    "@capacitor/cli": "^6.2.1",
+    "@capacitor/cli": "^8.3.3",
     "@capacitor/core": "^8.3.3",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@fontsource/dm-sans": "^5.2.8",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.14",
     "firebase": "^10.6.0",

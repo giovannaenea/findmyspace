@@ -3,7 +3,8 @@ import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from "reac
 
 import { db, auth } from './firebase.mjs'
 import { collection, doc, setDoc, getDoc, getDocs, deleteDoc } from "firebase/firestore";
-import { signInWithPopup, signOut, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, deleteUser } from "firebase/auth";
+import { signInWithCredential, signOut, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, deleteUser } from "firebase/auth";
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 import SearchBar from './SearchBar';
 import MenuSelect from './MenuSelect';
@@ -20,8 +21,6 @@ import AdminPanel from './AdminPanel';
 import Toast from './Toast';
 import './App.css';
 
-// Handles post-sign-in redirects that originate outside the Router tree
-// (e.g. the Add button in SearchBar sets sessionStorage before the modal opens)
 function PendingNavigator({ pendingNav, onDone }) {
   const navigate = useNavigate();
   useEffect(() => {
@@ -113,7 +112,6 @@ function App() {
     getDocs(collection(db, "properties")).then((querySnapshot) => {
       let results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      // Always filter out pending
       results = results.filter(p => p.status !== 'pending');
 
       for (const [key, value] of Object.entries(conditions)) {
@@ -136,7 +134,6 @@ function App() {
       if (bedOptionsTarget) {
         results = results.filter(p => p.bedOptions?.includes(bedOptionsTarget));
       }
-      // Fixed: use .every() so ALL selected amenities must match
       if (amenitiesTarget) {
         results = results.filter(p =>
           amenitiesTarget.every(amenity => p.amenities?.includes(amenity))
@@ -163,8 +160,6 @@ function App() {
 
   // ─── New property ─────────────────────────────────────────────────────────────
   const handleNewProperty = async (newProperty) => {
-    // Use a UUID so IDs never collide, even for properties with similar names.
-    // A URL-friendly slug is kept separately for display purposes only.
     const { v4: uuidv4 } = await import('uuid');
     const id = uuidv4();
     const propertyRef = doc(db, 'properties', id);
@@ -180,36 +175,43 @@ function App() {
   // ─── Sign in ──────────────────────────────────────────────────────────────────
   const handleSignIn = async (method = 'google', roleSelection = null, email = null, password = null) => {
     if (method === 'google') {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-      const result = await signInWithPopup(auth, provider);
-      const userRef = doc(db, "users", result.user.uid);
-      const docSnap = await getDoc(userRef);
+      try {
+        const result = await FirebaseAuthentication.signInWithGoogle();
+        const credential = GoogleAuthProvider.credential(result.credential?.idToken);
+        const userCredential = await signInWithCredential(auth, credential);
 
-      if (!docSnap.exists()) {
-        await setDoc(userRef, {
-          name: result.user.displayName,
-          profilePicture: result.user.photoURL,
-          favorites: [],
-          role: roleSelection,
-        });
-        setUser({ ...result.user, role: roleSelection, profilePicture: result.user.photoURL });
-      } else {
-        const userData = docSnap.data();
-        const finalRole = userData.role || roleSelection;
-        if (!userData.role) {
-          await setDoc(userRef, { role: roleSelection }, { merge: true });
+        const userRef = doc(db, "users", userCredential.user.uid);
+        const docSnap = await getDoc(userRef);
+
+        if (!docSnap.exists()) {
+          await setDoc(userRef, {
+            name: userCredential.user.displayName,
+            profilePicture: userCredential.user.photoURL,
+            favorites: [],
+            role: roleSelection,
+          });
+          setUser({ ...userCredential.user, role: roleSelection, profilePicture: userCredential.user.photoURL });
+        } else {
+          const userData = docSnap.data();
+          const finalRole = userData.role || roleSelection;
+          if (!userData.role && roleSelection) {
+            await setDoc(userRef, { role: roleSelection }, { merge: true });
+          }
+          setUser({
+            ...userCredential.user,
+            role: finalRole,
+            name: userData.name || userCredential.user.displayName,
+            profilePicture: userData.profilePicture || userCredential.user.photoURL,
+            isAdmin: userData.isAdmin === true,
+          });
         }
-        setUser({
-          ...result.user,
-          role: finalRole,
-          name: userData.name || result.user.displayName,
-          profilePicture: userData.profilePicture || result.user.photoURL,
-        });
+        setShowRoleModal(false);
+        const nav = sessionStorage.getItem('postSignInNav');
+        if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
+      } catch (err) {
+        console.error('Google sign-in error:', err);
+        showToast('Google sign-in failed. Please try again.');
       }
-      setShowRoleModal(false);
-      const nav = sessionStorage.getItem('postSignInNav');
-      if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
 
     } else if (method === 'email') {
       const result = await signInWithEmailAndPassword(auth, email, password);
@@ -246,7 +248,7 @@ function App() {
     }
   };
 
-  // ─── Update profile (name / pfp) ──────────────────────────────────────────────
+  // ─── Update profile ───────────────────────────────────────────────────────────
   const handleUpdateProfile = async (updates) => {
     if (!user) return;
     const userRef = doc(db, "users", user.uid);
