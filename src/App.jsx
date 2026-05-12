@@ -218,38 +218,49 @@ function App() {
       }
 
     } else if (method === 'email') {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      const userRef = doc(db, "users", result.user.uid);
-      const docSnap = await getDoc(userRef);
+      try {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        const userRef = doc(db, "users", result.user.uid);
+        const docSnap = await getDoc(userRef);
 
-      if (!docSnap.exists()) {
-        await setDoc(userRef, {
-          name: result.user.email,
-          profilePicture: null,
-          favorites: [],
-          role: roleSelection,
-        });
-        setUser({ ...result.user, role: roleSelection, profilePicture: null });
-      } else {
-        const userData = docSnap.data();
-        const storedRole = userData.role;
-        setUser({
-          ...result.user,
-          role: storedRole,
-          name: userData.name || result.user.email,
-          profilePicture: userData.profilePicture || null,
-          isAdmin: userData.isAdmin === true,
-        });
-        if (storedRole && storedRole !== roleSelection) {
-          setShowRoleModal(false);
-          const nav = sessionStorage.getItem('postSignInNav');
-          if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
-          return storedRole;
+        if (!docSnap.exists()) {
+          await setDoc(userRef, {
+            name: result.user.email,
+            profilePicture: null,
+            favorites: [],
+            role: roleSelection,
+          });
+          setUser({ ...result.user, role: roleSelection, profilePicture: null });
+        } else {
+          const userData = docSnap.data();
+          const storedRole = userData.role;
+          setUser({
+            ...result.user,
+            role: storedRole,
+            name: userData.name || result.user.email,
+            profilePicture: userData.profilePicture || null,
+            isAdmin: userData.isAdmin === true,
+          });
+          if (storedRole && storedRole !== roleSelection) {
+            setShowRoleModal(false);
+            const nav = sessionStorage.getItem('postSignInNav');
+            if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
+            return storedRole;
+          }
         }
+        setShowRoleModal(false);
+        const nav = sessionStorage.getItem('postSignInNav');
+        if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
+      } catch (err) {
+        console.error('Email sign-in error:', err);
+        const message =
+          err.code === 'auth/invalid-credential' ? 'Incorrect email or password.' :
+          err.code === 'auth/user-not-found'     ? 'No account found with that email.' :
+          err.code === 'auth/wrong-password'     ? 'Incorrect password.' :
+          err.code === 'auth/too-many-requests'  ? 'Too many attempts. Please try again later.' :
+          'Sign-in failed. Please try again.';
+        showToast(message);
       }
-      setShowRoleModal(false);
-      const nav = sessionStorage.getItem('postSignInNav');
-      if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
     }
   };
 
