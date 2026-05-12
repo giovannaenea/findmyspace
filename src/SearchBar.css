@@ -136,6 +136,9 @@
 }
 
 .sort-chip {
+  white-space: nowrap;
+  width: fit-content;
+  flex-shrink: 0;
   padding: 4px 12px;
   border-radius: var(--radius-lg);
   border: 1.5px solid var(--border);

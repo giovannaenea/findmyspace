@@ -38,7 +38,12 @@ const PropertyReview = ({ id, name, rating, address, price, bedOptions, walkingT
     <div className="property-card" onClick={handleClick}>
       <div className="property-card-image-wrap">
         {photos && photos[0] && (
-          <img className="property-card-image" src={photos[0]} alt={name} />
+          <img
+            className="property-card-image"
+            src={photos[0]}
+            alt={name}
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
         )}
         <div className="property-card-price-badge">
           NT$ {price?.toLocaleString()}/mo

@@ -101,7 +101,7 @@ const RoleModal = ({ onSignIn, onClose }) => {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><path d="M9 18l6-6-6-6" /></svg>
             </button>
             <button className="role-btn" onClick={() => { setSelectedRole('landlord'); setScreen('register'); }}>
-              <span className="role-btn-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#033F63" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M5.62 7.38L11.5 1.5L13.5 3.5" /><path d="M9.25 3.75L11 5.5" /><path d="M3.5 12.5C5.15685 12.5 6.5 11.1569 6.5 9.5C6.5 7.84315 5.15685 6.5 3.5 6.5C1.84315 6.5 0.5 7.84315 0.5 9.5C0.5 11.1569 1.84315 12.5 3.5 12.5Z" /></svg></span>
+              <span className="role-btn-icon"><svg viewBox="0 0 14 14" fill="none" stroke="#033F63" strokeLinecap="round" strokeLinejoin="round" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M8.5 13.5H0.5V4L4.5 0.5L8.5 4V13.5Z" /><path d="M8.5 13.5H13.5V6.5H8.5" /><path d="M4.5 13.5V11.5" /><path d="M3 8.5H6" /><path d="M3 5.5H6" /></svg></span>
               <span className="role-btn-label">I'm a Landlord</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><path d="M9 18l6-6-6-6" /></svg>
             </button>
