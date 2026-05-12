@@ -80,28 +80,32 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
     reviews.length === 0 ? 0 : reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
 
   const handleNewReview = async (newReview) => {
-    try {
-      const propertyRef = doc(db, 'properties', property.id);
-      const docSnap = await getDoc(propertyRef);
-      const newReviews = [...docSnap.data().reviews, newReview];
-      const newRating = calculateRating(newReviews);
-      const newPhotos = [...docSnap.data().photos, ...newReview.photos];
-      const updatedProperty = {
-        ...docSnap.data(),
-        photos: newPhotos,
-        numberOfReviews: property.numberOfReviews + 1,
-        rating: parseFloat(newRating.toFixed(2)),
-        reviews: newReviews,
-      };
-      await setDoc(propertyRef, updatedProperty, { merge: true });
-      setProperty({ id: property.id, ...updatedProperty });
-      handleSearch();
-      showToast?.('Review submitted!', 'success');
-    } catch (error) {
-      console.error('Error adding review', error);
-      showToast?.('Failed to submit review. Please try again.');
-    }
-  };
+  try {
+    const propertyRef = doc(db, 'properties', property.id);
+    const docSnap = await getDoc(propertyRef);
+    const newReviews = [...(docSnap.data().reviews || []), newReview];
+    const newRating = calculateRating(newReviews);
+
+    // Only update reviews — Firestore rules only allow signed-in users to touch reviews
+    await setDoc(propertyRef, {
+      reviews: newReviews,
+    }, { merge: true });
+
+    // Update local state with all computed fields
+    setProperty(prev => ({
+      ...prev,
+      reviews: newReviews,
+      numberOfReviews: newReviews.length,
+      rating: parseFloat(newRating.toFixed(2)),
+      photos: [...(prev.photos || []), ...(newReview.photos || [])],
+    }));
+    handleSearch();
+    showToast?.('Review submitted!', 'success');
+  } catch (error) {
+    console.error('Error adding review', error);
+    showToast?.('Failed to submit review. Please try again.');
+  }
+};
 
   const handleReply = async (reviewId, replyText) => {
     try {

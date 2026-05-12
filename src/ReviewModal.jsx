@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Rating, Modal, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
+import ImageUrlInput from './ImageURLInput';
 
 const StyledRating = styled(Rating)({
   '& .MuiRating-iconFilled': { color: '#b5b682' },
@@ -23,19 +24,28 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
   const [description, setDescription] = useState('');
   const [rating, setRating] = useState(0);
   const [checks, setChecks] = useState({});
+  const [photoUrls, setPhotoUrls] = useState([]);
+  const [uploadingCount, setUploadingCount] = useState(0);
 
   const toggleCheck = (key) => {
     setChecks(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const isValid = rating >= 1 && description.trim().length > 0;
+  const handleUploadingChange = (delta) => {
+    setUploadingCount(prev => Math.max(0, prev + delta));
+  };
 
-  // FIX #6: prefer the custom name/profilePicture set in the Firestore user doc
-  // (stored on the user object in App.jsx) over the raw Firebase Auth fields.
+  const deletePhotoUrl = (index) => {
+    setPhotoUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const isValid = rating >= 1 && description.trim().length > 0 && uploadingCount === 0;
+
   const displayName = user?.name || user?.displayName;
-  const avatarSrc  = user?.profilePicture || user?.photoURL;
+  const avatarSrc = user?.profilePicture || user?.photoURL;
 
   const handleSubmit = () => {
+    if (!isValid) return;
     const newReview = {
       id: uuidv4(),
       name: anonymous ? 'Anonymous' : displayName,
@@ -43,7 +53,7 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
       rating,
       description,
       checks,
-      photos: [],
+      photos: photoUrls,
       date: Date.now(),
       upvotes: 0,
       downvotes: 0,
@@ -54,6 +64,8 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
     setRating(0);
     setChecks({});
     setAnonymous(false);
+    setPhotoUrls([]);
+    setUploadingCount(0);
     handleModalClose();
   };
 
@@ -167,6 +179,19 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
             <p style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'right', marginTop: 4 }}>{description.length}/1000</p>
           </div>
 
+          {/* Photos */}
+          <div style={{ background: 'white', borderRadius: 12, padding: '14px 16px', boxShadow: '0 1px 3px rgba(3,63,99,0.08)' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
+              Photos <span style={{ fontWeight: 400, textTransform: 'none', fontSize: 11 }}>(optional)</span>
+            </p>
+            <ImageUrlInput
+              imageUrls={photoUrls}
+              setImageUrls={setPhotoUrls}
+              deleteImageUrl={deletePhotoUrl}
+              onUploadingChange={handleUploadingChange}
+            />
+          </div>
+
           {/* Submit */}
           <button
             onClick={handleSubmit}
@@ -179,7 +204,7 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
               cursor: isValid ? 'pointer' : 'not-allowed', transition: 'background 0.2s',
             }}
           >
-            Submit Review
+            {uploadingCount > 0 ? `Uploading ${uploadingCount} photo${uploadingCount > 1 ? 's' : ''}...` : 'Submit Review'}
           </button>
         </div>
       </Box>
