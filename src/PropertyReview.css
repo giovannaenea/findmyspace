@@ -4,12 +4,23 @@
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: box-shadow 0.2s;
   width: 100%;
+  /* Native-feeling press animation */
+  transition: transform 0.1s ease, opacity 0.1s ease;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-.property-card:hover {
-  box-shadow: var(--shadow-md);
+.property-card:active {
+  transform: scale(0.97);
+  opacity: 0.88;
+}
+
+/* Remove hover on mobile — hover doesn't make sense on touch */
+@media (hover: hover) {
+  .property-card:hover {
+    box-shadow: var(--shadow-md);
+  }
 }
 
 .property-card-image-wrap {
@@ -25,6 +36,9 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  /* Prevent image drag on mobile */
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .property-card-price-badge {
@@ -121,8 +135,9 @@
 .favorite-icon {
   color: var(--teal);
   cursor: pointer;
+  transition: opacity 0.1s;
 }
 
-.favorite-icon:hover {
-  opacity: 0.75;
+.favorite-icon:active {
+  opacity: 0.6;
 }

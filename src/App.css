@@ -1,6 +1,5 @@
 /* ── Fonts (local fallback stack — no CDN needed) ── */
 /* DM Sans is loaded via @fontsource/dm-sans — run: npm install @fontsource/dm-sans */
-/* The import below is added in index.jsx instead */
 
 :root {
   --navy: #033f63;
@@ -27,6 +26,13 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html {
+  /* Prevent scroll bounce on iOS/Android */
+  overscroll-behavior: none;
+  height: 100%;
 }
 
 body {
@@ -39,6 +45,7 @@ body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
+  height: 100%;
   /* Safe area insets for notch and home bar on mobile */
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
@@ -47,13 +54,27 @@ body {
   /* Smooth momentum scrolling on mobile */
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-y: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 button {
   font-family: 'DM Sans', sans-serif;
   cursor: pointer;
-  /* Make buttons feel more responsive on mobile */
   touch-action: manipulation;
+  /* Native-feeling press state */
+  transition: opacity 0.1s, transform 0.1s;
+}
+
+button:active {
+  opacity: 0.75;
+  transform: scale(0.97);
 }
 
 input, textarea, select {
@@ -68,6 +89,7 @@ code {
 /* Smooth page fade-in */
 #root {
   animation: fadeIn 0.15s ease-in;
+  height: 100%;
 }
 
 .App {
@@ -88,4 +110,20 @@ code {
   width: 100%;
   max-width: 480px;
   z-index: 200;
+}
+
+/* Hide scrollbar on all scrollable elements */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Native press effect on cards */
+.property-card:active {
+  transform: scale(0.98);
+  opacity: 0.92;
 }
