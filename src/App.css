@@ -26,6 +26,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -43,19 +44,39 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+  /* Smooth momentum scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
 }
 
 button {
   font-family: 'DM Sans', sans-serif;
   cursor: pointer;
+  /* Make buttons feel more responsive on mobile */
+  touch-action: manipulation;
 }
 
 input, textarea, select {
   font-family: 'DM Sans', sans-serif;
+  touch-action: manipulation;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Smooth page fade-in */
+#root {
+  animation: fadeIn 0.15s ease-in;
+}
+
+.App {
+  animation: fadeIn 0.15s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .menu-container {

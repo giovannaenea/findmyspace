@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Capacitor } from '@capacitor/core';
 
 import { db, auth } from './firebase.mjs'
 import { collection, doc, setDoc, getDoc, getDocs, deleteDoc } from "firebase/firestore";
@@ -20,6 +21,8 @@ import MyProperties from './MyProperties';
 import AdminPanel from './AdminPanel';
 import Toast from './Toast';
 import './App.css';
+
+const isNative = Capacitor.isNativePlatform();
 
 function PendingNavigator({ pendingNav, onDone }) {
   const navigate = useNavigate();
@@ -284,7 +287,7 @@ function App() {
     fetchAndListen();
   };
 
-  if (authLoading) return <Loading />;
+  if (authLoading && !isNative) return <Loading />;
 
   return (
     <Router>
@@ -309,14 +312,14 @@ function App() {
                 conditions={conditions}
               />
             </div>
-            {loading ? <Loading /> : (
-              <div>
-                {filteredProperties.length > 0
-                  ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} />
-                  : <h1 className="no-properties">No properties found</h1>
-                }
-              </div>
-            )}
+           {loading && !isNative ? <Loading /> : (
+  <div>
+    {loading || filteredProperties.length > 0
+      ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} />
+      : <h1 className="no-properties">No properties found</h1>
+    }
+  </div>
+)}
             <div className="menu-container">
               <MenuSelect user={user} />
             </div>
@@ -346,7 +349,7 @@ function App() {
           <MyProperties user={user} handleSignIn={() => setShowRoleModal(true)} showToast={showToast} />
         } />
         <Route path="/admin" element={
-          authLoading ? <Loading /> : user?.isAdmin ? <AdminPanel user={user} /> : <Navigate to="/" replace />
+          authLoading ? (isNative ? null : <Loading />) : user?.isAdmin ? <AdminPanel user={user} /> : <Navigate to="/" replace />
         } />
         <Route path="/profile" element={
           <ProfilePage

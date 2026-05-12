@@ -39,14 +39,20 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
       const data = { id, ...raw, reviews: raw.reviews ?? [] };
       setProperty(data);
 
-      if (data.landlordId) {
-        const landlordSnap = await getDoc(doc(db, 'users', data.landlordId));
-        if (landlordSnap.exists()) {
-          setLandlordName(data.landlordName || landlordSnap.data().name || 'Unknown');
-        } else if (data.landlordName) {
-          setLandlordName(data.landlordName);
+      // Landlord fetch — separate try/catch so failures don't trigger error toast
+      try {
+        if (data.landlordId) {
+          const landlordSnap = await getDoc(doc(db, 'users', data.landlordId));
+          if (landlordSnap.exists()) {
+            setLandlordName(data.landlordName || landlordSnap.data().name || 'Unknown');
+          } else if (data.landlordName) {
+            setLandlordName(data.landlordName);
+          }
         }
+      } catch {
+        if (data.landlordName) setLandlordName(data.landlordName);
       }
+
     } catch (error) {
       console.error('Error fetching property:', error);
       showToast?.('Failed to load property. Please try again.');
@@ -265,11 +271,10 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
           </div>
         </div>
 
-        {/* Landlord Info — name visible to all, contact only to logged-in */}
+        {/* Landlord Info */}
         <div className="detail-card">
           <h3 className="detail-card-title">Landlord Information</h3>
 
-          {/* Landlord name — visible to everyone */}
           {landlordName && (
             <div className="detail-contact-row" style={{ marginBottom: 12 }}>
               <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" style={{ flexShrink: 0 }} xmlns="http://www.w3.org/2000/svg">
@@ -279,7 +284,6 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
             </div>
           )}
 
-          {/* Contact details — logged-in only */}
           {user ? (
             <div className="detail-contact">
               <div className="detail-contact-row">
@@ -306,7 +310,7 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
           )}
         </div>
 
-        {/* AI Review Summary — only shown when at least one review has written text */}
+        {/* AI Review Summary */}
         {property.reviews?.some(r => (r.description || r.comment || '').trim().length > 0) && (
           <div className="detail-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: aiSummary ? 12 : 0 }}>
