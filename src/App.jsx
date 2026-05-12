@@ -195,8 +195,10 @@ function App() {
           setUser({ ...userCredential.user, role: roleSelection, profilePicture: userCredential.user.photoURL });
         } else {
           const userData = docSnap.data();
-          const finalRole = userData.role || roleSelection;
-          if (!userData.role && roleSelection) {
+          const isAdmin = userData.isAdmin === true;
+          // Never overwrite an admin's role with roleSelection from the modal
+          const finalRole = isAdmin ? userData.role : (userData.role || roleSelection);
+          if (!userData.role && roleSelection && !isAdmin) {
             await setDoc(userRef, { role: roleSelection }, { merge: true });
           }
           setUser({
@@ -204,7 +206,7 @@ function App() {
             role: finalRole,
             name: userData.name || userCredential.user.displayName,
             profilePicture: userData.profilePicture || userCredential.user.photoURL,
-            isAdmin: userData.isAdmin === true,
+            isAdmin,
           });
         }
         setShowRoleModal(false);
@@ -236,6 +238,7 @@ function App() {
           role: storedRole,
           name: userData.name || result.user.email,
           profilePicture: userData.profilePicture || null,
+          isAdmin: userData.isAdmin === true,
         });
         if (storedRole && storedRole !== roleSelection) {
           setShowRoleModal(false);
@@ -348,7 +351,11 @@ function App() {
           <MyProperties user={user} handleSignIn={() => setShowRoleModal(true)} showToast={showToast} />
         } />
         <Route path="/admin" element={
-          authLoading ? (isNative ? null : <Loading />) : user?.isAdmin ? <AdminPanel user={user} /> : <Navigate to="/" replace />
+          authLoading
+            ? (isNative ? null : <Loading />)
+            : user?.isAdmin === true
+              ? <AdminPanel user={user} />
+              : <Navigate to="/" replace />
         } />
         <Route path="/profile" element={
           <ProfilePage

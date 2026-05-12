@@ -2,10 +2,9 @@
   position: relative;
   width: 100%;
   height: 300px;
-  background-color: #f4f7f6;
-  margin: auto;
+  background-color: #e8eaec;
   overflow: hidden;
-  border-radius: 12px;
+  /* No border-radius — full bleed like native photo viewers */
 }
 
 .slide {
@@ -15,37 +14,74 @@
   top: 0;
   left: 0;
   object-fit: cover;
-  border-radius: 12px;
-  transition: opacity 0.5s ease;
   opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
-.active {
+.slide.active {
   opacity: 1;
 }
 
-.arrow {
+/* Favorite button — top left */
+.slider-favorite {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(3, 63, 99, 0.6);
-  color: #fedc97;
+  top: 14px;
+  left: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+/* Counter pill — top right */
+.slider-counter {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.45);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  padding: 4px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10;
+  letter-spacing: 0.3px;
+}
+
+/* Dot indicators — bottom center */
+.slider-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.slider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
   border: none;
-  padding: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 0;
   cursor: pointer;
-  z-index: 100;
-  border-radius: 4px;
-  font-family: 'Overused Grotesk', sans-serif;
+  transition: background 0.2s, transform 0.2s;
 }
 
-.arrow:hover {
-  background-color: rgba(40, 102, 110, 0.8);
-}
-
-.prev {
-  left: 10px;
-}
-
-.next {
-  right: 10px;
+.slider-dot.active {
+  background: white;
+  transform: scale(1.3);
 }

@@ -14,6 +14,7 @@ import { hapticLight, hapticMedium } from './haptics.js';
 
 const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, showToast }) => {
   const { id } = useParams();
+  const navigate = useNavigate(); // FIX: must be declared before the useEffect that uses it
   const [property, setProperty] = useState(null);
 
   // Swipe-back gesture — fires navigate(-1) when user swipes right from left edge
@@ -45,7 +46,6 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
   const [notFound, setNotFound] = useState(false);
   const [aiSummary, setAiSummary] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProperty();

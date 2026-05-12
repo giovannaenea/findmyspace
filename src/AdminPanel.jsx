@@ -45,6 +45,13 @@ const AdminPanel = ({ user }) => {
 
   if (loading) return <Loading />;
 
+  // Hard guard — even if the route somehow renders this for a non-admin,
+  // the component refuses to show anything. Firestore rules are the real
+  // enforcement but this prevents the UI from flashing.
+  if (!user || user.isAdmin !== true) {
+    return null;
+  }
+
   return (
     <div className="admin-page">
       <BackButton />

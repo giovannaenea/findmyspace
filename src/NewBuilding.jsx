@@ -31,7 +31,6 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
   const [lng, setLng] = useState('');
   const [latError, setLatError] = useState('');
   const [lngError, setLngError] = useState('');
-  const [walkingTime, setWalkingTime] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
   const [uploadingCount, setUploadingCount] = useState(0);
   const [amenities, setAmenities] = useState([]);
@@ -52,14 +51,14 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
   };
 
   const validateCoord = (val, min, max) => {
-    if (!val) return true; // optional
+    if (!val) return false; // now required
     const n = parseFloat(val);
     return !isNaN(n) && n >= min && n <= max;
   };
 
   useEffect(() => {
     const phoneDigits = phone.replace(/\D/g, '');
-    const phoneValid = !phone || (phoneDigits.length >= 7 && phoneDigits.length <= 15);
+    const phoneValid = phoneDigits.length >= 7 && phoneDigits.length <= 15;
     const latValid = validateCoord(lat, -90, 90);
     const lngValid = validateCoord(lng, -180, 180);
     setIsValid(
@@ -82,19 +81,19 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
   const handlePhoneChange = (e) => {
     const cleaned = e.target.value.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
     setPhone(cleaned);
-    if (!cleaned) { setPhoneError(''); return; }
+    if (!cleaned) { setPhoneError('Phone number is required'); return; }
     const digits = cleaned.replace(/\D/g, '');
     setPhoneError(digits.length < 7 || digits.length > 15 ? 'Must be 7–15 digits' : '');
   };
 
   const handleLatChange = (e) => {
     setLat(e.target.value);
-    setLatError(e.target.value && !validateCoord(e.target.value, -90, 90) ? 'Must be between -90 and 90' : '');
+    setLatError(!e.target.value ? 'Latitude is required' : !validateCoord(e.target.value, -90, 90) ? 'Must be between -90 and 90' : '');
   };
 
   const handleLngChange = (e) => {
     setLng(e.target.value);
-    setLngError(e.target.value && !validateCoord(e.target.value, -180, 180) ? 'Must be between -180 and 180' : '');
+    setLngError(!e.target.value ? 'Longitude is required' : !validateCoord(e.target.value, -180, 180) ? 'Must be between -180 and 180' : '');
   };
 
   const handleAmenityChange = (option) => {
@@ -125,7 +124,6 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
         photos: imageUrls,
         lat: lat ? parseFloat(lat) : null,
         lng: lng ? parseFloat(lng) : null,
-        walkingTime: walkingTime ? parseInt(walkingTime) : 0,
         rating: 0,
         numberOfReviews: 0,
         reviews: [],
@@ -192,7 +190,7 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
           </div>
 
           <div className="nb-field">
-            <label className="nb-label">Location Coordinates</label>
+            <label className="nb-label">Location Coordinates *</label>
             <div style={{ display: 'flex', gap: 8 }}>
               <div style={{ flex: 1 }}>
                 <input
@@ -214,7 +212,7 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
                   type="number"
                   step="any"
                 />
-                {lngError && <p className="nb-error">{lngError}</p>}
+                {(lngError || (attempted && !lng)) && <p className="nb-error">{lngError || 'Required'}</p>}
               </div>
             </div>
             <p className="nb-hint">
@@ -223,19 +221,7 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
           </div>
 
           <div className="nb-field">
-            <label className="nb-label">Walking Time to Campus (minutes)</label>
-            <input
-              className="nb-input"
-              value={walkingTime}
-              onChange={e => setWalkingTime(e.target.value.replace(/\D/g, ''))}
-              placeholder="e.g. 10"
-              inputMode="numeric"
-            />
-            <p className="nb-hint">Optional — shown on the listing as walking distance to NDHU</p>
-          </div>
-
-          <div className="nb-field">
-            <label className="nb-label">Phone Number</label>
+            <label className="nb-label">Phone Number *</label>
             <input className={`nb-input${phoneError ? ' nb-input-error' : ''}`} value={phone} onChange={handlePhoneChange} placeholder="e.g. +0912345678" inputMode="tel" />
             {phoneError && <p className="nb-error">{phoneError}</p>}
           </div>

@@ -317,9 +317,11 @@ const ProfilePage = ({ user, handleSignIn, handleSignOut, handleUpdateProfile, h
             )}
             <p className="profile-email">{user.email}</p>
             <span className="profile-role-badge">
-              {user.role === 'landlord'
-                ? <><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><path d="M5.62 7.38L11.5 1.5L13.5 3.5" /><path d="M9.25 3.75L11 5.5" /><path d="M3.5 12.5C5.15685 12.5 6.5 11.1569 6.5 9.5C6.5 7.84315 5.15685 6.5 3.5 6.5C1.84315 6.5 0.5 7.84315 0.5 9.5C0.5 11.1569 1.84315 12.5 3.5 12.5Z" /></svg> Landlord</>
-                : <><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><path d="M5.92 11.34C8.91338 11.34 11.34 8.91338 11.34 5.92C11.34 2.92662 8.91338 0.5 5.92 0.5C2.92662 0.5 0.5 2.92662 0.5 5.92C0.5 8.91338 2.92662 11.34 5.92 11.34Z" /><path d="M13.5 13.5L9.75 9.75" /></svg> Tenant</>
+              {user.isAdmin === true
+                ? <><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><path d="M7 0.5L1 3V7C1 10.31 3.64 13.41 7 13.5C10.36 13.41 13 10.31 13 7V3L7 0.5Z" /></svg> Admin</>
+                : user.role === 'landlord'
+                  ? <><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><path d="M5.62 7.38L11.5 1.5L13.5 3.5" /><path d="M9.25 3.75L11 5.5" /><path d="M3.5 12.5C5.15685 12.5 6.5 11.1569 6.5 9.5C6.5 7.84315 5.15685 6.5 3.5 6.5C1.84315 6.5 0.5 7.84315 0.5 9.5C0.5 11.1569 1.84315 12.5 3.5 12.5Z" /></svg> Landlord</>
+                  : <><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="12" height="12"><path d="M5.92 11.34C8.91338 11.34 11.34 8.91338 11.34 5.92C11.34 2.92662 8.91338 0.5 5.92 0.5C2.92662 0.5 0.5 2.92662 0.5 5.92C0.5 8.91338 2.92662 11.34 5.92 11.34Z" /><path d="M13.5 13.5L9.75 9.75" /></svg> Tenant</>
               }
             </span>
           </div>
@@ -349,7 +351,7 @@ const ProfilePage = ({ user, handleSignIn, handleSignOut, handleUpdateProfile, h
             <div className="profile-settings-text">
               <p className="profile-settings-label">Role</p>
               <p className="profile-settings-value">
-                {user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Not set'}
+                {user.isAdmin === true ? 'Admin' : user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Not set'}
               </p>
             </div>
           </div>
