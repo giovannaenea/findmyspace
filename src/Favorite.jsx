@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { hapticLight } from './haptics.js';
 import { db } from './firebase.mjs';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -30,6 +31,7 @@ const Favorite = ({ userId, propertyId }) => {
 
   const handleFavoriteClick = async () => {
     if (!userId) return;
+    hapticLight();
     const userRef = doc(db, 'users', userId);
     const docSnap = await getDoc(userRef);
     // FIX: guard against missing favorites field (e.g. email-registered users)

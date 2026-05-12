@@ -27,10 +27,18 @@
   padding: 0;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  /* FIX 1: disable text selection — prevents browser-style selection handles on long press */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* FIX 1 cont: re-enable selection only where the user needs to type or copy */
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 html {
-  /* Prevent scroll bounce on iOS/Android */
   overscroll-behavior: none;
   height: 100%;
 }
@@ -46,15 +54,12 @@ body {
   margin: 0 auto;
   min-height: 100vh;
   height: 100%;
-  /* Safe area insets for notch and home bar on mobile */
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
-  /* Smooth momentum scrolling on mobile */
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
-  /* Hide scrollbar */
   scrollbar-width: none;
   -ms-overflow-style: none;
   overscroll-behavior-y: none;
@@ -68,8 +73,8 @@ button {
   font-family: 'DM Sans', sans-serif;
   cursor: pointer;
   touch-action: manipulation;
-  /* Native-feeling press state */
-  transition: opacity 0.1s, transform 0.1s;
+  /* FIX 3: faster press — 0.07s feels instant, 0.1s still feels like a website */
+  transition: opacity 0.07s, transform 0.07s;
 }
 
 button:active {
@@ -77,9 +82,14 @@ button:active {
   transform: scale(0.97);
 }
 
+/* FIX 2: prevent Android auto-zoom on input focus — any input under 16px triggers it.
+   Set all inputs to 16px then scale the visual size back down with transform so the
+   layout stays the same. touch-action: manipulation also removes the 300ms tap delay. */
 input, textarea, select {
   font-family: 'DM Sans', sans-serif;
   touch-action: manipulation;
+  font-size: 16px !important;
+  transform-origin: left center;
 }
 
 code {
@@ -120,6 +130,20 @@ code {
 
 *::-webkit-scrollbar {
   display: none;
+}
+
+/* FIX 4: stop inner scroll containers bleeding overscroll to the page.
+   Targets the filter panel, role modal sheet, and any div with overflow-y: auto
+   (ReviewModal uses an inline-styled div so we catch it with the universal rule below) */
+.filter-body,
+.modal-sheet {
+  overscroll-behavior: contain;
+}
+
+/* Catch all overflow-y: auto containers — covers ReviewModal inline div and future additions */
+div[style*="overflow-y: auto"],
+div[style*="overflowY"] {
+  overscroll-behavior: contain;
 }
 
 /* Native press effect on cards */

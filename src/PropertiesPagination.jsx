@@ -17,8 +17,12 @@ const PropertiesPagination = ({ properties, user, handleSignIn }) => {
   const offset = (page - 1) * PER_PAGE;
   const currentProperties = properties.slice(offset, offset + PER_PAGE);
 
+  const dismissKeyboard = () => {
+    if (document.activeElement) document.activeElement.blur();
+  };
+
   return (
-    <div className="listings-container">
+    <div className="listings-container" onTouchStart={dismissKeyboard}>
       <div className="listings-header">
         <h2 className="listings-title">Available Listings</h2>
         <span className="listings-count">{properties.length} {properties.length === 1 ? 'property' : 'properties'}</span>

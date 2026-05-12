@@ -142,6 +142,8 @@ const RoleModal = ({ onSignIn, onClose }) => {
             <input
               type="email"
               placeholder="Email address"
+              inputMode="email"
+              enterKeyHint="next"
               value={email}
               onChange={(e) => { setEmail(e.target.value); setError(''); }}
               className="auth-field"
@@ -149,6 +151,7 @@ const RoleModal = ({ onSignIn, onClose }) => {
             <input
               type="password"
               placeholder="Password (min. 6 characters)"
+              enterKeyHint="next"
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError(''); }}
               className="auth-field"
@@ -156,6 +159,7 @@ const RoleModal = ({ onSignIn, onClose }) => {
             <input
               type="password"
               placeholder="Confirm password"
+              enterKeyHint="done"
               value={confirmPassword}
               onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
               className="auth-field"
@@ -201,6 +205,8 @@ const RoleModal = ({ onSignIn, onClose }) => {
             <input
               type="email"
               placeholder="Email address"
+              inputMode="email"
+              enterKeyHint="next"
               value={email}
               onChange={(e) => { setEmail(e.target.value); setError(''); }}
               className="auth-field"
@@ -208,6 +214,7 @@ const RoleModal = ({ onSignIn, onClose }) => {
             <input
               type="password"
               placeholder="Password"
+              enterKeyHint="done"
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError(''); }}
               className="auth-field"

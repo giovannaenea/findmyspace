@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
-import { collection, doc, getDocs, getDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, query, where } from 'firebase/firestore';
 import { getRecommendations } from './gemini.js';
 import PropertyReview from './PropertyReview';
 import MenuSelect from './MenuSelect';
@@ -24,9 +24,9 @@ const FavoritesComponent = ({ user, handleSearch, handleSignIn, showToast }) => 
 
   const fetchFavorites = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'properties'));
+      const querySnapshot = await getDocs(query(collection(db, 'properties'), where('status', '==', 'approved')));
       const propertyData = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      const approved = propertyData.filter(p => p.status === 'approved' || !p.status);
+      const approved = propertyData;
       setAllProperties(approved);
       const userSnap = await getDoc(doc(db, 'users', user.uid));
       const userFavorites = userSnap.data()?.favorites || [];

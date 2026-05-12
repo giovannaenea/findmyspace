@@ -163,6 +163,8 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
               placeholder="Search properties..."
               value={searchTerm}
               onChange={handleSearch}
+              inputMode="search"
+              enterKeyHint="search"
             />
           </div>
           <button

@@ -10,10 +10,36 @@ import Loading from './Loading';
 import MenuSelect from './MenuSelect';
 import { formatBeds } from './PropertyReview';
 import './PropertyDetails.css';
+import { hapticLight, hapticMedium } from './haptics.js';
 
 const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, showToast }) => {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
+
+  // Swipe-back gesture — fires navigate(-1) when user swipes right from left edge
+  useEffect(() => {
+    let startX = 0;
+    let startY = 0;
+    const onTouchStart = (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    };
+    const onTouchEnd = (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = Math.abs(e.changedTouches[0].clientY - startY);
+      // Must start within left 30px, travel >60px right, and be more horizontal than vertical
+      if (startX < 30 && dx > 60 && dy < 40) {
+        hapticLight();
+        navigate(-1);
+      }
+    };
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [navigate]);
   const [landlordName, setLandlordName] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -100,6 +126,7 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
       photos: [...(prev.photos || []), ...(newReview.photos || [])],
     }));
     handleSearch();
+    hapticMedium();
     showToast?.('Review submitted!', 'success');
   } catch (error) {
     console.error('Error adding review', error);

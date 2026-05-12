@@ -18,6 +18,7 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
   const [replyText, setReplyText] = useState(review.landlordReply || '');
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const [votes, setVotes] = useState({ upvotes: 0, downvotes: 0 });
 
   useEffect(() => {
@@ -96,6 +97,17 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
       {/* Description */}
       <p className="review-desc">{review.description}</p>
 
+      {/* Photos */}
+      {review.photos && review.photos.length > 0 && (
+        <div className="review-photos">
+          {review.photos.map((url, i) => (
+            <button key={i} className="review-photo-wrap" onClick={() => setLightboxIndex(i)}>
+              <img src={url} alt={`Review photo ${i + 1}`} className="review-photo" />
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Votes + delete */}
       <div className="review-footer">
         <div className="review-votes">
@@ -166,6 +178,44 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
               disabled={!replyText.trim()}
             >Post Reply</button>
           </div>
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && review.photos?.length > 0 && (
+        <div className="lightbox-overlay" onClick={() => setLightboxIndex(null)}>
+          <button className="lightbox-close" onClick={() => setLightboxIndex(null)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="22" height="22">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          {review.photos.length > 1 && (
+            <button className="lightbox-nav lightbox-prev" onClick={e => { e.stopPropagation(); setLightboxIndex(i => (i - 1 + review.photos.length) % review.photos.length); }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="22" height="22">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+          )}
+          <img
+            src={review.photos[lightboxIndex]}
+            alt={`Photo ${lightboxIndex + 1}`}
+            className="lightbox-img"
+            onClick={e => e.stopPropagation()}
+          />
+          {review.photos.length > 1 && (
+            <button className="lightbox-nav lightbox-next" onClick={e => { e.stopPropagation(); setLightboxIndex(i => (i + 1) % review.photos.length); }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="22" height="22">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          )}
+          {review.photos.length > 1 && (
+            <div className="lightbox-dots">
+              {review.photos.map((_, i) => (
+                <button key={i} className={`lightbox-dot${i === lightboxIndex ? ' active' : ''}`} onClick={e => { e.stopPropagation(); setLightboxIndex(i); }} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

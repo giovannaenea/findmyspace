@@ -276,6 +276,7 @@ const ProfilePage = ({ user, handleSignIn, handleSignOut, handleUpdateProfile, h
                     type="url"
                     className="profile-input"
                     placeholder="https://..."
+                    inputMode="url"
                     value={pfpUrl}
                     onChange={e => { setPfpUrl(e.target.value); setPfpError(''); }}
                   />
@@ -305,6 +306,8 @@ const ProfilePage = ({ user, handleSignIn, handleSignOut, handleUpdateProfile, h
                   type="text"
                   className="profile-input"
                   placeholder="Enter new display name..."
+                  inputMode="text"
+                  enterKeyHint="done"
                   value={newName}
                   onChange={e => { setNewName(e.target.value); setNameError(''); }}
                 />

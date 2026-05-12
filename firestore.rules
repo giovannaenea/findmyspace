@@ -51,10 +51,10 @@ service cloud.firestore {
                     && !('status' in request.resource.data.diff(resource.data).affectedKeys())
                     && !('landlordId' in request.resource.data.diff(resource.data).affectedKeys());
 
-      // FIX #3: any signed-in user can update the reviews array (for upvotes/downvotes
-      // and new reviews). They cannot touch any other field.
+      // Any signed-in user can update reviews, rating, and numberOfReviews
+      // (for new reviews, upvotes/downvotes). They cannot touch any other field.
       allow update: if isSignedIn()
-                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviews']);
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviews', 'rating', 'numberOfReviews']);
 
       allow update: if isAdmin();
       allow delete: if isAdmin();

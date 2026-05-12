@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './MenuSelect.css';
+import { hapticLight } from './haptics.js';
 
 const MenuSelect = ({ user }) => {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ const MenuSelect = ({ user }) => {
       {tabs.map(tab => {
         const active = location.pathname === tab.path;
         return (
-          <button key={tab.key} className={`tab-item ${active ? 'active' : ''}`} onClick={() => navigate(tab.path)}>
+          <button key={tab.key} className={`tab-item ${active ? 'active' : ''}`} onClick={() => { hapticLight(); navigate(tab.path); }}>
             <span className="tab-icon">{tab.icon(active)}</span>
             <span className="tab-label">{tab.label}</span>
           </button>

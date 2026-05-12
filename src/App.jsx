@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from "reac
 import { Capacitor } from '@capacitor/core';
 
 import { db, auth } from './firebase.mjs'
-import { collection, doc, setDoc, getDoc, getDocs, deleteDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where } from "firebase/firestore";
 import { signInWithCredential, signOut, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, deleteUser } from "firebase/auth";
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
@@ -80,20 +80,21 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // ─── Fetch properties ─────────────────────────────────────────────────────────
+  // ─── Fetch properties — wait for auth to resolve first (critical on Android/Capacitor)
   useEffect(() => {
-    fetchAndListen();
-  }, []);
+    if (!authLoading) fetchAndListen();
+  }, [authLoading]);
 
   const fetchAndListen = async () => {
     setLoading(true);
     try {
-      const querySnapshot = await getDocs(collection(db, 'properties'));
+      const q = query(collection(db, 'properties'), where('status', '==', 'approved'));
+      const querySnapshot = await getDocs(q);
       const properties = [];
       querySnapshot.forEach((doc) => {
         properties.push({ id: doc.id, ...doc.data() });
       });
-      setFilteredProperties(properties.filter(p => p.id && p.name && p.status !== 'pending'));
+      setFilteredProperties(properties.filter(p => p.id && p.name));
     } catch (error) {
       console.error('Error fetching properties:', error);
       showToast('Failed to load properties. Please refresh.');
@@ -112,10 +113,8 @@ function App() {
 
     setConditions(conditions);
 
-    getDocs(collection(db, "properties")).then((querySnapshot) => {
+    getDocs(query(collection(db, "properties"), where('status', '==', 'approved'))).then((querySnapshot) => {
       let results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      results = results.filter(p => p.status !== 'pending');
 
       for (const [key, value] of Object.entries(conditions)) {
         if (key === "searchTerm" && value) {
