@@ -135,3 +135,17 @@
     display: none;
   }
 }
+.slider-unpublish-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c0392b;
+}
+
+.slider-unpublish-btn:hover {
+  color: #922b21;
+}

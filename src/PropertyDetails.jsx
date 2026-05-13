@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 import ImageSlider from './ImageSlider';
 import ReviewSection from './ReviewSection';
@@ -175,6 +175,17 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
     }
   };
 
+  const handleUnpublish = async () => {
+    try {
+      await updateDoc(doc(db, 'properties', property.id), { status: 'pending' });
+      setProperty(prev => ({ ...prev, status: 'pending' }));
+      showToast?.('Listing returned to pending. The landlord can see it in their listings.', 'info');
+    } catch (error) {
+      console.error('Error unpublishing property:', error);
+      showToast?.('Failed to unpublish listing. Please try again.');
+    }
+  };
+
   if (loading) return <Loading />;
 
   if (notFound) return (
@@ -208,7 +219,12 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
         <div style={{ width: 28 }} />
       </div>
 
-      <ImageSlider images={property.photos} user={user} propertyId={property.id} />
+      <ImageSlider
+        images={property.photos}
+        user={user}
+        propertyId={property.id}
+        onUnpublish={user?.isAdmin ? handleUnpublish : undefined}
+      />
 
       <div className="detail-content">
         {/* Title + Price */}

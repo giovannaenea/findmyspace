@@ -48,7 +48,7 @@ const PropertyReview = ({ id, name, rating, address, price, bedOptions, walkingT
         <div className="property-card-price-badge">
           NT$ {price?.toLocaleString()}/mo
         </div>
-        {user && user.role === 'tenant' && (
+        {user && user.role === 'tenant' && !user.isAdmin && (
           <div className="property-card-favorite" onClick={e => e.stopPropagation()}>
             <Favorite userId={user.uid} propertyId={id} />
           </div>

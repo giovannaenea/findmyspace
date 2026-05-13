@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Favorite from './Favorite';
 import './ImageSlider.css';
 
-const ImageSlider = ({ images, user, propertyId }) => {
+const ImageSlider = ({ images, user, propertyId, onUnpublish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const touchStartX = useRef(null);
@@ -103,10 +103,22 @@ const ImageSlider = ({ images, user, propertyId }) => {
         </>
       )}
 
-      {/* Favorite button */}
-      {user && user.role === 'tenant' && (
+      {/* Favorite button — tenants only */}
+      {user && user.role === 'tenant' && !user.isAdmin && (
         <div className="slider-favorite">
           <Favorite userId={user.uid} propertyId={propertyId} />
+        </div>
+      )}
+
+      {/* Remove listing button — admins only */}
+      {user?.isAdmin && onUnpublish && (
+        <div className="slider-favorite">
+          <button className="slider-unpublish-btn" onClick={onUnpublish} title="Return to pending">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 1v6M4 4L7 1l3 3" />
+              <path d="M11.5 9.5v2a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1v-2" />
+            </svg>
+          </button>
         </div>
       )}
 
@@ -138,6 +150,7 @@ ImageSlider.propTypes = {
   images: PropTypes.arrayOf(PropTypes.string),
   user: PropTypes.object,
   propertyId: PropTypes.string,
+  onUnpublish: PropTypes.func,
 };
 
 export default ImageSlider;
