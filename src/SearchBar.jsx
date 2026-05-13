@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './SearchBar.css';
 import FilterDropdown from './FilterDropdown';
 import GoogleSignInButton from './GoogleSignIn';
@@ -307,6 +308,14 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
       )}
     </div>
   );
+};
+
+SearchBar.propTypes = {
+  onSearch: PropTypes.func.isRequired,
+  user: PropTypes.object,
+  handleSignIn: PropTypes.func,
+  handleSignOut: PropTypes.func,
+  conditions: PropTypes.object,
 };
 
 export default SearchBar;

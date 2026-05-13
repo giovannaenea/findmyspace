@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './ReviewSection.css';
 import { styled } from '@mui/material/styles';
 import './PropertyReview.css';
@@ -76,4 +77,12 @@ const Review = ({ user, handleSignIn, rating, reviews, handleNewReview }) => {
   );
   };
   
-  export default Review;
+  Review.propTypes = {
+  user: PropTypes.object,
+  handleSignIn: PropTypes.func,
+  rating: PropTypes.number,
+  reviews: PropTypes.array,
+  handleNewReview: PropTypes.func.isRequired,
+};
+
+export default Review;

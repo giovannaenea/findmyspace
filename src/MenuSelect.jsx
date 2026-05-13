@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './MenuSelect.css';
 import { hapticLight } from './haptics.js';
@@ -110,6 +111,10 @@ const MenuSelect = ({ user }) => {
       })}
     </div>
   );
+};
+
+MenuSelect.propTypes = {
+  user: PropTypes.object,
 };
 
 export default MenuSelect;

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './Toast.css';
 
 const Toast = ({ message, type = 'error', onClose }) => {
@@ -23,6 +24,12 @@ const Toast = ({ message, type = 'error', onClose }) => {
       </button>
     </div>
   );
+};
+
+Toast.propTypes = {
+  message: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['error', 'success', 'info']),
+  onClose: PropTypes.func.isRequired,
 };
 
 export default Toast;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Rating, Modal, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
@@ -210,6 +211,13 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
       </Box>
     </Modal>
   );
+};
+
+ReviewModal.propTypes = {
+  user: PropTypes.object,
+  isModalOpen: PropTypes.bool.isRequired,
+  handleModalClose: PropTypes.func.isRequired,
+  handleNewReview: PropTypes.func.isRequired,
 };
 
 export default ReviewModal;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { Slider } from '@mui/material';
 import './FilterPage.css';
@@ -172,6 +173,11 @@ const FilterPage = ({ conditions, onSearch }) => {
       </div>
     </div>
   );
+};
+
+FilterPage.propTypes = {
+  conditions: PropTypes.object,
+  onSearch: PropTypes.func.isRequired,
 };
 
 export default FilterPage;

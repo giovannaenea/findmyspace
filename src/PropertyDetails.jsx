@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -154,16 +155,19 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
       const propertyRef = doc(db, 'properties', property.id);
       const docSnap = await getDoc(propertyRef);
       if (docSnap.exists()) {
-        const newReviews = property.reviews.filter(r => r.id !== reviewId);
+        const newReviews = (docSnap.data().reviews || []).filter(r => r.id !== reviewId);
         const newRating = calculateRating(newReviews);
-        const updatedProperty = {
-          ...docSnap.data(),
-          numberOfReviews: property.numberOfReviews - 1,
-          rating: parseFloat(newRating.toFixed(2)),
+        await setDoc(propertyRef, {
           reviews: newReviews,
-        };
-        await setDoc(propertyRef, updatedProperty, { merge: true });
-        setProperty({ id: property.id, ...updatedProperty });
+          numberOfReviews: newReviews.length,
+          rating: parseFloat(newRating.toFixed(2)),
+        }, { merge: true });
+        setProperty(prev => ({
+          ...prev,
+          reviews: newReviews,
+          numberOfReviews: newReviews.length,
+          rating: parseFloat(newRating.toFixed(2)),
+        }));
       }
     } catch (error) {
       console.error('Error deleting review:', error);
@@ -393,6 +397,14 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
       </div>
     </div>
   );
+};
+
+PropertyDetails.propTypes = {
+  user: PropTypes.object,
+  handleSignIn: PropTypes.func,
+  handleSignOut: PropTypes.func,
+  handleSearch: PropTypes.func,
+  showToast: PropTypes.func,
 };
 
 export default PropertyDetails;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
 import { collection, doc, getDocs, getDoc, query, where } from 'firebase/firestore';
@@ -147,6 +148,13 @@ const FavoritesComponent = ({ user, handleSearch, handleSignIn, showToast }) => 
       </div>
     </div>
   );
+};
+
+FavoritesComponent.propTypes = {
+  user: PropTypes.object,
+  handleSearch: PropTypes.func,
+  handleSignIn: PropTypes.func,
+  showToast: PropTypes.func,
 };
 
 export default FavoritesComponent;

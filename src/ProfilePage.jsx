@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 import './ProfilePage.css';
 import MenuSelect from './MenuSelect';
 
@@ -400,6 +401,15 @@ const ProfilePage = ({ user, handleSignIn, handleSignOut, handleUpdateProfile, h
       <div className="menu-container"><MenuSelect user={user} /></div>
     </div>
   );
+};
+
+ProfilePage.propTypes = {
+  user: PropTypes.object,
+  handleSignIn: PropTypes.func,
+  handleSignOut: PropTypes.func,
+  handleUpdateProfile: PropTypes.func,
+  handleDeleteAccount: PropTypes.func,
+  showToast: PropTypes.func,
 };
 
 export default ProfilePage;

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
 import Favorite from './Favorite';
 import './ImageSlider.css';
 
@@ -131,6 +132,12 @@ const ImageSlider = ({ images, user, propertyId }) => {
       )}
     </div>
   );
+};
+
+ImageSlider.propTypes = {
+  images: PropTypes.arrayOf(PropTypes.string),
+  user: PropTypes.object,
+  propertyId: PropTypes.string,
 };
 
 export default ImageSlider;

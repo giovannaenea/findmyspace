@@ -57,7 +57,8 @@ service cloud.firestore {
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviews', 'rating', 'numberOfReviews']);
 
       allow update: if isAdmin();
-      allow delete: if isAdmin();
+      allow delete: if isAdmin()
+                    || (isLandlord() && resource.data.landlordId == request.auth.uid);
     }
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { auth } from './firebase.mjs';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import './RoleModal.css';
@@ -235,6 +236,11 @@ const RoleModal = ({ onSignIn, onClose }) => {
   }
 
   return null;
+};
+
+RoleModal.propTypes = {
+  onSignIn: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default RoleModal;

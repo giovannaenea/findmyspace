@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
 import { collection, getDocs, doc, deleteDoc, updateDoc, query, where } from 'firebase/firestore';
@@ -352,6 +353,12 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
       </div>
     </div>
   );
+};
+
+MyProperties.propTypes = {
+  user: PropTypes.object,
+  handleSignIn: PropTypes.func,
+  showToast: PropTypes.func,
 };
 
 export default MyProperties;

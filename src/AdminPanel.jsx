@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
-import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
 import Loading from './Loading';
 import BackButton from './BackButton';
 import './AdminPanel.css';
@@ -19,9 +20,13 @@ const AdminPanel = ({ user }) => {
   const fetchPending = async () => {
     setLoading(true);
     try {
-      const snap = await getDocs(collection(db, 'properties'));
-      const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      setPending(all.filter(p => p.status === 'pending').sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0)));
+      const q = query(
+        collection(db, 'properties'),
+        where('status', '==', 'pending'),
+        orderBy('submittedAt', 'desc')
+      );
+      const snap = await getDocs(q);
+      setPending(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (err) {
       console.error(err);
     } finally {
@@ -112,6 +117,13 @@ const AdminPanel = ({ user }) => {
       )}
     </div>
   );
+};
+
+AdminPanel.propTypes = {
+  user: PropTypes.shape({
+    uid: PropTypes.string,
+    isAdmin: PropTypes.bool,
+  }),
 };
 
 export default AdminPanel;

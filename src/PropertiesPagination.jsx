@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Pagination from '@mui/material/Pagination';
 import PropertyReview from './PropertyReview';
 import './PropertiesPagination.css';
@@ -60,6 +61,12 @@ const PropertiesPagination = ({ properties, user, handleSignIn }) => {
       )}
     </div>
   );
+};
+
+PropertiesPagination.propTypes = {
+  properties: PropTypes.array.isRequired,
+  user: PropTypes.object,
+  handleSignIn: PropTypes.func,
 };
 
 export default PropertiesPagination;

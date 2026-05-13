@@ -245,6 +245,7 @@ function App() {
             setShowRoleModal(false);
             const nav = sessionStorage.getItem('postSignInNav');
             if (nav) { sessionStorage.removeItem('postSignInNav'); setPendingNav(nav); }
+            showToast(`Signed in as ${storedRole} — your role was already set.`, 'info');
             return storedRole;
           }
         }

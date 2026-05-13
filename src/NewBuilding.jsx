@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox, FormControl, FormControlLabel, FormLabel, FormGroup, Radio, RadioGroup, Button } from '@mui/material';
 import ImageUrlInput from './ImageURLInput';
@@ -298,6 +299,12 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
       )}
     </div>
   );
+};
+
+NewBuilding.propTypes = {
+  handleNewProperty: PropTypes.func.isRequired,
+  showToast: PropTypes.func,
+  user: PropTypes.object,
 };
 
 export default NewBuilding;
