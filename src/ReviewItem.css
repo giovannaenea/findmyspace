@@ -98,6 +98,25 @@
   opacity: 0.85;
 }
 
+.review-photos-toggle {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--teal);
+  cursor: pointer;
+  margin-top: 6px;
+  transition: all 0.15s;
+}
+
+.review-photos-toggle:hover {
+  background: rgba(40,102,110,0.06);
+  border-color: var(--teal);
+}
+
 /* Lightbox */
 .lightbox-overlay {
   position: fixed;

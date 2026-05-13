@@ -18,6 +18,7 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
   const [replyText, setReplyText] = useState(review.landlordReply || '');
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [votes, setVotes] = useState({ upvotes: 0, downvotes: 0 });
 
@@ -99,12 +100,19 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
 
       {/* Photos */}
       {review.photos && review.photos.length > 0 && (
-        <div className="review-photos">
-          {review.photos.map((url, i) => (
-            <button key={i} className="review-photo-wrap" onClick={() => setLightboxIndex(i)}>
-              <img src={url} alt={`Review photo ${i + 1}`} className="review-photo" />
+        <div>
+          <div className="review-photos">
+            {(showAllPhotos ? review.photos : review.photos.slice(0, 3)).map((url, i) => (
+              <button key={i} className="review-photo-wrap" onClick={() => setLightboxIndex(i)}>
+                <img src={url} alt={`Review photo ${i + 1}`} className="review-photo" />
+              </button>
+            ))}
+          </div>
+          {review.photos.length > 3 && (
+            <button className="review-photos-toggle" onClick={() => setShowAllPhotos(p => !p)}>
+              {showAllPhotos ? 'Show less' : `+${review.photos.length - 3} more photo${review.photos.length - 3 > 1 ? 's' : ''}`}
             </button>
-          ))}
+          )}
         </div>
       )}
 
