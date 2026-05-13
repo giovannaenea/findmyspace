@@ -35,6 +35,12 @@
   border: 1px solid #a3d9b5;
 }
 
+.toast--info {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
 .toast-close {
   background: none;
   border: none;

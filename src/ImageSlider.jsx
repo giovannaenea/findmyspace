@@ -104,7 +104,7 @@ const ImageSlider = ({ images, user, propertyId }) => {
       )}
 
       {/* Favorite button */}
-      {user && (
+      {user && user.role === 'tenant' && (
         <div className="slider-favorite">
           <Favorite userId={user.uid} propertyId={propertyId} />
         </div>

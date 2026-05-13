@@ -178,7 +178,9 @@ function App() {
   const handleSignIn = async (method = 'google', roleSelection = null, email = null, password = null) => {
     if (method === 'google') {
       try {
-        const result = await FirebaseAuthentication.signInWithGoogle();
+        const result = await FirebaseAuthentication.signInWithGoogle({
+          customParameters: [{ key: 'prompt', value: 'select_account' }],
+        });
         const credential = GoogleAuthProvider.credential(result.credential?.idToken);
         const userCredential = await signInWithCredential(auth, credential);
 
@@ -186,6 +188,7 @@ function App() {
         const docSnap = await getDoc(userRef);
 
         if (!docSnap.exists()) {
+          // Brand new account — roleSelection must be set (Sign Up path)
           await setDoc(userRef, {
             name: userCredential.user.displayName,
             profilePicture: userCredential.user.photoURL,
@@ -196,11 +199,13 @@ function App() {
         } else {
           const userData = docSnap.data();
           const isAdmin = userData.isAdmin === true;
-          // Never overwrite an admin's role with roleSelection from the modal
-          const finalRole = isAdmin ? userData.role : (userData.role || roleSelection);
-          if (!userData.role && roleSelection && !isAdmin) {
-            await setDoc(userRef, { role: roleSelection }, { merge: true });
+          const storedRole = userData.role;
+          // If they came via Sign Up but already have an account, log them in
+          // with their stored role and notify them via a toast
+          if (roleSelection && storedRole && storedRole !== roleSelection) {
+            showToast(`You already have an account as a ${storedRole}. Logged in as ${storedRole}.`, 'info');
           }
+          const finalRole = isAdmin ? storedRole : (storedRole || roleSelection);
           setUser({
             ...userCredential.user,
             role: finalRole,

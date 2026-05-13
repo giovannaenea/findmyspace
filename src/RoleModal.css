@@ -60,13 +60,15 @@
 .modal-back {
   background: none;
   border: none;
-  color: var(--text-secondary);
-  font-size: 13px;
+  color: var(--navy);
   padding: 0;
-  margin-bottom: 16px;
-  display: block;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }
+
+.modal-back:hover { color: var(--teal); }
 
 .modal-title {
   font-size: 20px;
