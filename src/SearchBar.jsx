@@ -219,6 +219,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
                   setBathroomOption('Any');
                   setAmenities([]);
                   setRentRange([1000, 30000]);
+                  setShowMine(false);
                   onSearch({
                     searchTerm,
                     bedOptions: 'All',
@@ -226,6 +227,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
                     amenities: [],
                     rentRange: [1000, 30000],
                     bathroomType: 'Any',
+                    showMine: false,
                   });
                 }}>
                   Clear all

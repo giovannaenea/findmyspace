@@ -14,6 +14,7 @@ const CHECK_CATEGORIES = [
 
 // FIX: added propertyLandlordId prop so we can check ownership
 const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId, propertyLandlordId }) => {
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [replyText, setReplyText] = useState(review.landlordReply || '');
   const [upvoted, setUpvoted] = useState(false);
@@ -27,18 +28,18 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
 
   const handleUpvote = () => {
     let newVotes = { ...votes };
-    newVotes.upvotes += upvoted ? -1 : 1;
+    newVotes.upvotes = Math.max(0, newVotes.upvotes + (upvoted ? -1 : 1));
     setUpvoted(!upvoted);
-    if (downvoted) { setDownvoted(false); newVotes.downvotes -= 1; }
+    if (downvoted) { setDownvoted(false); newVotes.downvotes = Math.max(0, newVotes.downvotes - 1); }
     setVotes(newVotes);
     updateVotes(newVotes);
   };
 
   const handleDownvote = () => {
     let newVotes = { ...votes };
-    newVotes.downvotes += downvoted ? -1 : 1;
+    newVotes.downvotes = Math.max(0, newVotes.downvotes + (downvoted ? -1 : 1));
     setDownvoted(!downvoted);
-    if (upvoted) { setUpvoted(false); newVotes.upvotes -= 1; }
+    if (upvoted) { setUpvoted(false); newVotes.upvotes = Math.max(0, newVotes.upvotes - 1); }
     setVotes(newVotes);
     updateVotes(newVotes);
   };
@@ -99,12 +100,19 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
 
       {/* Photos */}
       {review.photos && review.photos.length > 0 && (
-        <div className="review-photos">
-          {review.photos.map((url, i) => (
-            <button key={i} className="review-photo-wrap" onClick={() => setLightboxIndex(i)}>
-              <img src={url} alt={`Review photo ${i + 1}`} className="review-photo" />
+        <div>
+          <div className="review-photos">
+            {(showAllPhotos ? review.photos : review.photos.slice(0, 3)).map((url, i) => (
+              <button key={i} className="review-photo-wrap" onClick={() => setLightboxIndex(i)}>
+                <img src={url} alt={`Review photo ${i + 1}`} className="review-photo" />
+              </button>
+            ))}
+          </div>
+          {review.photos.length > 3 && (
+            <button className="review-photos-toggle" onClick={() => setShowAllPhotos(p => !p)}>
+              {showAllPhotos ? 'Show less' : `+${review.photos.length - 3} more photo${review.photos.length - 3 > 1 ? 's' : ''}`}
             </button>
-          ))}
+          )}
         </div>
       )}
 
@@ -211,8 +219,8 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
           )}
           {review.photos.length > 1 && (
             <div className="lightbox-dots">
-              {review.photos.map((_, i) => (
-                <button key={i} className={`lightbox-dot${i === lightboxIndex ? ' active' : ''}`} onClick={e => { e.stopPropagation(); setLightboxIndex(i); }} />
+              {review.photos.map((_, dotIdx) => (
+                <button key={dotIdx} className={`lightbox-dot${dotIdx === lightboxIndex ? ' active' : ''}`} onClick={e => { e.stopPropagation(); setLightboxIndex(dotIdx); }} />
               ))}
             </div>
           )}

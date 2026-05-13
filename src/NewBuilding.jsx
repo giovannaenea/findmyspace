@@ -288,13 +288,13 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
             <p style={{ fontSize: 12, color: '#e53e3e', fontWeight: 600, margin: '-4px 0 0' }}>At least one photo is required</p>
           )}
 
-          <Button
+          <button
+            className="nb-submit-btn"
             onClick={handleSubmit}
             disabled={loading || uploadingCount > 0}
-            style={{ marginBottom: 30 }}
           >
             {uploadingCount > 0 ? `Uploading ${uploadingCount} photo${uploadingCount > 1 ? 's' : ''}...` : loading ? 'Submitting...' : 'Submit for Review'}
-          </Button>
+          </button>
         </div>
       )}
     </div>
