@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from "reac
 import { Capacitor } from '@capacitor/core';
 
 import { db, auth } from './firebase.mjs'
-import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, query, where } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, query, where } from "firebase/firestore";
 import { signInWithCredential, signOut, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, deleteUser } from "firebase/auth";
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
@@ -43,6 +43,7 @@ function App() {
     amenities: [],
     rentRange: [1000, 30000],
     bathroomType: 'Any',
+    showMine: false,
   };
 
   const [filteredProperties, setFilteredProperties] = useState([]);
@@ -145,6 +146,9 @@ function App() {
         const [min, max] = rentRangeTarget;
         results = results.filter(p => p.price >= min && p.price <= max);
       }
+      if (conditions.showMine && user?.uid) {
+        results = results.filter(p => p.landlordId === user.uid);
+      }
       if (conditions.bathroomType && conditions.bathroomType !== 'Any') {
         results = results.filter(p => p.amenities?.includes(conditions.bathroomType));
       }
@@ -158,6 +162,18 @@ function App() {
 
       setFilteredProperties(results);
     });
+  };
+
+  // ─── Return to pending ────────────────────────────────────────────────────────
+  const handleReturnToPending = async (propertyId) => {
+    try {
+      await updateDoc(doc(db, 'properties', propertyId), { status: 'pending' });
+      setFilteredProperties(prev => prev.filter(p => p.id !== propertyId));
+      showToast('Listing returned to pending review.', 'success');
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to update listing. Please try again.');
+    }
   };
 
   // ─── New property ─────────────────────────────────────────────────────────────
@@ -334,7 +350,7 @@ function App() {
            {loading && !isNative ? <Loading /> : (
   <div>
     {loading || filteredProperties.length > 0
-      ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} />
+      ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} onReturnToPending={handleReturnToPending} />
       : <h1 className="no-properties">No properties found</h1>
     }
   </div>

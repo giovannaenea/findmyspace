@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Pagination from '@mui/material/Pagination';
 import PropertyReview from './PropertyReview';
 import './PropertiesPagination.css';
 
-const PropertiesPagination = ({ properties, user, handleSignIn }) => {
+const PropertiesPagination = ({ properties, user, handleSignIn, onReturnToPending }) => {
   const [page, setPage] = useState(1);
   const PER_PAGE = 10;
 
@@ -15,8 +14,20 @@ const PropertiesPagination = ({ properties, user, handleSignIn }) => {
     }
   }, [properties, page]);
 
+  // Reset to page 1 when the property list changes (e.g. filter/sort applied)
+  useEffect(() => {
+    setPage(1);
+  }, [properties.length]);
+
+  const goToPage = (n) => {
+    setPage(n);
+    // Scroll to top of listings so user sees page 2 from the start
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const offset = (page - 1) * PER_PAGE;
   const currentProperties = properties.slice(offset, offset + PER_PAGE);
+  const totalPages = Math.ceil(properties.length / PER_PAGE);
 
   const dismissKeyboard = () => {
     if (document.activeElement) document.activeElement.blur();
@@ -42,21 +53,40 @@ const PropertiesPagination = ({ properties, user, handleSignIn }) => {
             reviews={property.reviews}
             user={user}
             handleSignIn={handleSignIn}
+            landlordId={property.landlordId}
+            onReturnToPending={onReturnToPending}
           />
         ))}
       </div>
-      {Math.ceil(properties.length / PER_PAGE) > 1 && (
+
+      {totalPages > 1 && (
         <div className="listings-pagination">
-          <Pagination
-            count={Math.ceil(properties.length / PER_PAGE)}
-            page={page}
-            onChange={(e, value) => setPage(value)}
-            size="small"
-            sx={{
-              '& .MuiPaginationItem-root': { color: '#033f63' },
-              '& .MuiPaginationItem-root.Mui-selected': { background: '#033f63', color: '#fff' },
-            }}
-          />
+          <button
+            className="listings-page-btn"
+            onClick={() => goToPage(Math.max(1, page - 1))}
+            disabled={page === 1}
+            aria-label="Previous page"
+          >
+            &#8249;
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+            <button
+              key={n}
+              className={`listings-page-btn${page === n ? ' listings-page-btn--active' : ''}`}
+              onClick={() => goToPage(n)}
+              aria-label={`Page ${n}`}
+            >
+              {n}
+            </button>
+          ))}
+          <button
+            className="listings-page-btn"
+            onClick={() => goToPage(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages}
+            aria-label="Next page"
+          >
+            &#8250;
+          </button>
         </div>
       )}
     </div>
@@ -67,6 +97,7 @@ PropertiesPagination.propTypes = {
   properties: PropTypes.array.isRequired,
   user: PropTypes.object,
   handleSignIn: PropTypes.func,
+  onReturnToPending: PropTypes.func,
 };
 
 export default PropertiesPagination;

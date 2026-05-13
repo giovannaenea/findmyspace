@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 import ImageSlider from './ImageSlider';
 import ReviewSection from './ReviewSection';
 import ReviewsPagination from './ReviewsPagination';
 import Loading from './Loading';
 import MenuSelect from './MenuSelect';
-import { formatBeds } from './PropertyReview';
+import { formatBeds } from './propertyUtils';
 import './PropertyDetails.css';
 import { hapticLight, hapticMedium } from './haptics.js';
 
@@ -17,6 +17,7 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
   const { id } = useParams();
   const navigate = useNavigate(); // FIX: must be declared before the useEffect that uses it
   const [property, setProperty] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Swipe-back gesture — fires navigate(-1) when user swipes right from left edge
   useEffect(() => {
@@ -43,7 +44,6 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
     };
   }, [navigate]);
   const [landlordName, setLandlordName] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [aiSummary, setAiSummary] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -175,17 +175,6 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
     }
   };
 
-  const handleUnpublish = async () => {
-    try {
-      await updateDoc(doc(db, 'properties', property.id), { status: 'pending' });
-      setProperty(prev => ({ ...prev, status: 'pending' }));
-      showToast?.('Listing returned to pending. The landlord can see it in their listings.', 'info');
-    } catch (error) {
-      console.error('Error unpublishing property:', error);
-      showToast?.('Failed to unpublish listing. Please try again.');
-    }
-  };
-
   if (loading) return <Loading />;
 
   if (notFound) return (
@@ -223,7 +212,6 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
         images={property.photos}
         user={user}
         propertyId={property.id}
-        onUnpublish={user?.isAdmin ? handleUnpublish : undefined}
       />
 
       <div className="detail-content">

@@ -1,5 +1,5 @@
 .listings-container {
-  padding: 16px 16px 20px;
+  padding: 16px 16px 100px;
   width: 100%;
 }
 
@@ -30,5 +30,53 @@
 .listings-pagination {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 6px;
   margin-top: 20px;
+  padding-bottom: 4px;
+}
+
+.listings-page-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.listings-page-btn:hover:not(:disabled) {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.listings-page-btn:active:not(:disabled) {
+  background: var(--bg);
+}
+
+.listings-page-btn--active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+}
+
+.listings-page-btn--active:hover {
+  background: var(--teal) !important;
+  border-color: var(--teal) !important;
+  color: var(--white) !important;
+}
+
+.listings-page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }

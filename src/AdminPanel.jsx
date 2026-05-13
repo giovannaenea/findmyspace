@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
-import { collection, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import Loading from './Loading';
 import BackButton from './BackButton';
 import './AdminPanel.css';
@@ -22,11 +22,13 @@ const AdminPanel = ({ user }) => {
     try {
       const q = query(
         collection(db, 'properties'),
-        where('status', '==', 'pending'),
-        orderBy('submittedAt', 'desc')
+        where('status', '==', 'pending')
       );
       const snap = await getDocs(q);
-      setPending(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Sort by submittedAt descending on the client to avoid needing a composite index
+      docs.sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
+      setPending(docs);
     } catch (err) {
       console.error(err);
     } finally {

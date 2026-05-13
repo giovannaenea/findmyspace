@@ -141,3 +141,65 @@
 .favorite-icon:active {
   opacity: 0.6;
 }
+/* Return to Pending bar — admin / landlord only */
+.property-card-return-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.property-card-return-btn {
+  background: none;
+  border: 1.5px solid #c0392b;
+  border-radius: var(--radius-sm);
+  color: #c0392b;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 6px 14px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.property-card-return-btn:hover {
+  background: rgba(192, 57, 43, 0.06);
+}
+
+.property-card-return-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.property-card-return-confirm {
+  background: var(--teal);
+  color: var(--cream);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.property-card-return-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.property-card-return-cancel {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 5px 10px;
+  cursor: pointer;
+}

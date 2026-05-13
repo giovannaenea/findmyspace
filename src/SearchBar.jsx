@@ -18,6 +18,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
   const [showOrderBy, setShowOrderBy] = useState(false);
   const [amenities, setAmenities] = useState(conditions['amenities']);
   const [bathroomOption, setBathroomOption] = useState(conditions['bathroomType'] || 'Any');
+  const [showMine, setShowMine] = useState(conditions['showMine'] || false);
 
   useEffect(() => {
     setSearchTerm(conditions['searchTerm']);
@@ -26,6 +27,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
     setAmenities(conditions['amenities']);
     setRentRange(conditions['rentRange']);
     setBathroomOption(conditions['bathroomType'] || 'Any');
+    setShowMine(conditions['showMine'] || false);
   }, [conditions]);
 
   const toggleFilters = () => {
@@ -82,6 +84,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
       amenities: key === 'amenities' ? option : amenities,
       rentRange: key === 'rent' ? option : rentRange,
       bathroomType: key === 'bathroomType' ? option : bathroomOption,
+      showMine: key === 'showMine' ? option : showMine,
     };
     onSearch(searchConditions);
   };
@@ -184,12 +187,20 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
           {orderByOptions.map(opt => (
             <button
               key={opt.value}
-              className={`sort-chip${orderBy === opt.value ? ' sort-chip--active' : ''}`}
-              onClick={() => handleOrderByChange(opt.value)}
+              className={`sort-chip${orderBy === opt.value && !showMine ? ' sort-chip--active' : ''}`}
+              onClick={() => { setShowMine(false); handleSearchUpdate('showMine', false); handleOrderByChange(opt.value); }}
             >
               {opt.label}
             </button>
           ))}
+          {user?.role === 'landlord' && (
+            <button
+              className={`sort-chip${showMine ? ' sort-chip--active' : ''}`}
+              onClick={() => { const next = !showMine; setShowMine(next); handleSearchUpdate('showMine', next); }}
+            >
+              My Listings
+            </button>
+          )}
         </div>
       </div>
 
