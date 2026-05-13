@@ -86,16 +86,18 @@ function App() {
     if (!authLoading) fetchAndListen();
   }, [authLoading]);
 
+  const allPropertiesRef = React.useRef([]);
+
   const fetchAndListen = async () => {
     setLoading(true);
     try {
       const q = query(collection(db, 'properties'), where('status', '==', 'approved'));
       const querySnapshot = await getDocs(q);
-      const properties = [];
-      querySnapshot.forEach((doc) => {
-        properties.push({ id: doc.id, ...doc.data() });
-      });
-      setFilteredProperties(properties.filter(p => p.id && p.name));
+      const properties = querySnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(p => p.id && p.name);
+      allPropertiesRef.current = properties;
+      setFilteredProperties(properties);
     } catch (error) {
       console.error('Error fetching properties:', error);
       showToast('Failed to load properties. Please refresh.');
@@ -104,70 +106,54 @@ function App() {
     }
   };
 
-  // ─── Search / filter ──────────────────────────────────────────────────────────
-  const handleSearch = (conditions) => {
-    let orderByField = null;
-    let searchTermTarget = null;
-    let amenitiesTarget = null;
-    let rentRangeTarget = null;
-    let bedOptionsTarget = null;
+  const userRef = React.useRef(user);
+  useEffect(() => { userRef.current = user; }, [user]);
 
+  // ─── Search / filter — pure in-memory, no Firestore reads ────────────────────
+  const handleSearch = useCallback((conditions) => {
     setConditions(conditions);
+    let results = [...allPropertiesRef.current];
 
-    getDocs(query(collection(db, "properties"), where('status', '==', 'approved'))).then((querySnapshot) => {
-      let results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const term = conditions.searchTerm?.trim().toLowerCase();
+    if (term) results = results.filter(p =>
+      p.name?.toLowerCase().includes(term) ||
+      p.address?.toLowerCase().includes(term)
+    );
 
-      for (const [key, value] of Object.entries(conditions)) {
-        if (key === "searchTerm" && value) {
-          searchTermTarget = value.trim().toLowerCase();
-        } else if (key === "orderBy" && value && value !== 'All') {
-          orderByField = value;
-        } else if (key === "bedOptions" && value && value !== 'All') {
-          bedOptionsTarget = value;
-        } else if (key === "amenities" && Array.isArray(value) && value.length > 0) {
-          amenitiesTarget = value;
-        } else if (key === "rentRange" && value) {
-          rentRangeTarget = value;
-        }
-      }
+    if (conditions.bedOptions && conditions.bedOptions !== 'All')
+      results = results.filter(p => p.bedOptions?.includes(conditions.bedOptions));
 
-      if (searchTermTarget) {
-        results = results.filter(p => p.name.toLowerCase().includes(searchTermTarget));
-      }
-      if (bedOptionsTarget) {
-        results = results.filter(p => p.bedOptions?.includes(bedOptionsTarget));
-      }
-      if (amenitiesTarget) {
-        results = results.filter(p =>
-          amenitiesTarget.every(amenity => p.amenities?.includes(amenity))
-        );
-      }
-      if (rentRangeTarget) {
-        const [min, max] = rentRangeTarget;
-        results = results.filter(p => p.price >= min && p.price <= max);
-      }
-      if (conditions.showMine && user?.uid) {
-        results = results.filter(p => p.landlordId === user.uid);
-      }
-      if (conditions.bathroomType && conditions.bathroomType !== 'Any') {
-        results = results.filter(p => p.amenities?.includes(conditions.bathroomType));
-      }
-      if (orderByField) {
-        results = [...results].sort((a, b) =>
-          orderByField === 'rating'
-            ? (b.rating || 0) - (a.rating || 0)
-            : (b.numberOfReviews || 0) - (a.numberOfReviews || 0)
-        );
-      }
+    if (Array.isArray(conditions.amenities) && conditions.amenities.length > 0)
+      results = results.filter(p =>
+        conditions.amenities.every(a => p.amenities?.includes(a))
+      );
 
-      setFilteredProperties(results);
-    });
-  };
+    if (conditions.rentRange) {
+      const [min, max] = conditions.rentRange;
+      results = results.filter(p => p.price >= min && p.price <= max);
+    }
+
+    if (conditions.bathroomType && conditions.bathroomType !== 'Any')
+      results = results.filter(p => p.amenities?.includes(conditions.bathroomType));
+
+    if (conditions.showMine && userRef.current?.uid)
+      results = results.filter(p => p.landlordId === userRef.current.uid);
+
+    if (conditions.orderBy && conditions.orderBy !== 'All')
+      results = [...results].sort((a, b) =>
+        conditions.orderBy === 'rating'
+          ? (b.rating || 0) - (a.rating || 0)
+          : (b.numberOfReviews || 0) - (a.numberOfReviews || 0)
+      );
+
+    setFilteredProperties(results);
+  }, []);
 
   // ─── Return to pending ────────────────────────────────────────────────────────
   const handleReturnToPending = async (propertyId) => {
     try {
       await updateDoc(doc(db, 'properties', propertyId), { status: 'pending' });
+      allPropertiesRef.current = allPropertiesRef.current.filter(p => p.id !== propertyId);
       setFilteredProperties(prev => prev.filter(p => p.id !== propertyId));
       showToast('Listing returned to pending review.', 'success');
     } catch (err) {
@@ -299,6 +285,9 @@ function App() {
     try {
       const currentUser = auth.currentUser;
       if (!currentUser) return;
+      // Delete all listings owned by this landlord
+      const listingsSnap = await getDocs(query(collection(db, 'properties'), where('landlordId', '==', currentUser.uid)));
+      await Promise.all(listingsSnap.docs.map(d => deleteDoc(doc(db, 'properties', d.id))));
       await deleteDoc(doc(db, 'users', currentUser.uid));
       await deleteUser(currentUser);
       setUser(null);
@@ -385,7 +374,7 @@ function App() {
         } />
         <Route path="/admin" element={
           authLoading
-            ? (isNative ? null : <Loading />)
+            ? <Loading />
             : user?.isAdmin === true
               ? <AdminPanel user={user} />
               : <Navigate to="/" replace />

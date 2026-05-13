@@ -18,7 +18,6 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
   const [replyText, setReplyText] = useState(review.landlordReply || '');
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
-  const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [votes, setVotes] = useState({ upvotes: 0, downvotes: 0 });
 
@@ -28,18 +27,18 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
 
   const handleUpvote = () => {
     let newVotes = { ...votes };
-    newVotes.upvotes = Math.max(0, newVotes.upvotes + (upvoted ? -1 : 1));
+    newVotes.upvotes += upvoted ? -1 : 1;
     setUpvoted(!upvoted);
-    if (downvoted) { setDownvoted(false); newVotes.downvotes = Math.max(0, newVotes.downvotes - 1); }
+    if (downvoted) { setDownvoted(false); newVotes.downvotes -= 1; }
     setVotes(newVotes);
     updateVotes(newVotes);
   };
 
   const handleDownvote = () => {
     let newVotes = { ...votes };
-    newVotes.downvotes = Math.max(0, newVotes.downvotes + (downvoted ? -1 : 1));
+    newVotes.downvotes += downvoted ? -1 : 1;
     setDownvoted(!downvoted);
-    if (upvoted) { setUpvoted(false); newVotes.upvotes = Math.max(0, newVotes.upvotes - 1); }
+    if (upvoted) { setUpvoted(false); newVotes.upvotes -= 1; }
     setVotes(newVotes);
     updateVotes(newVotes);
   };
@@ -100,19 +99,12 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
 
       {/* Photos */}
       {review.photos && review.photos.length > 0 && (
-        <div>
-          <div className="review-photos">
-            {(showAllPhotos ? review.photos : review.photos.slice(0, 3)).map((url, i) => (
-              <button key={i} className="review-photo-wrap" onClick={() => setLightboxIndex(i)}>
-                <img src={url} alt={`Review photo ${i + 1}`} className="review-photo" />
-              </button>
-            ))}
-          </div>
-          {review.photos.length > 3 && (
-            <button className="review-photos-toggle" onClick={() => setShowAllPhotos(p => !p)}>
-              {showAllPhotos ? 'Show less' : `+${review.photos.length - 3} more photo${review.photos.length - 3 > 1 ? 's' : ''}`}
+        <div className="review-photos">
+          {review.photos.map((url, i) => (
+            <button key={i} className="review-photo-wrap" onClick={() => setLightboxIndex(i)}>
+              <img src={url} alt={`Review photo ${i + 1}`} className="review-photo" />
             </button>
-          )}
+          ))}
         </div>
       )}
 
@@ -134,7 +126,7 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
             {votes.downvotes}
           </button>
         </div>
-        {user && review.userId === user.uid && (
+        {user && (review.userId === user.uid || user.isAdmin) && (
           <button className="delete-btn" onClick={() => handleDeleteReview(review.id)}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
               <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
@@ -219,8 +211,8 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
           )}
           {review.photos.length > 1 && (
             <div className="lightbox-dots">
-              {review.photos.map((_, dotIdx) => (
-                <button key={dotIdx} className={`lightbox-dot${dotIdx === lightboxIndex ? ' active' : ''}`} onClick={e => { e.stopPropagation(); setLightboxIndex(dotIdx); }} />
+              {review.photos.map((_, i) => (
+                <button key={i} className={`lightbox-dot${i === lightboxIndex ? ' active' : ''}`} onClick={e => { e.stopPropagation(); setLightboxIndex(i); }} />
               ))}
             </div>
           )}

@@ -24,7 +24,7 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [lineId, setLineId] = useState('');
-  const [landlordName, setLandlordName] = useState('');
+  const [landlordName, setLandlordName] = useState(user?.name || user?.displayName || '');
   const [housingType, setHousingType] = useState('');
   const [bedOption, setBedOption] = useState('');
   const [price, setPrice] = useState('');
@@ -64,7 +64,7 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
     const lngValid = validateCoord(lng, -180, 180);
     setIsValid(
       !!name && !nameError && !!landlordName && !!address && !!housingType &&
-      !!bedOption && !!price && amenities.length > 0 &&
+      !!bedOption && !!price && parseInt(price) > 0 && amenities.length > 0 &&
       imageUrls.length > 0 && phoneValid && !phoneError &&
       latValid && lngValid
     );
@@ -241,7 +241,7 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
           <div className="nb-field">
             <label className="nb-label">Monthly Rent (NT$) *</label>
             <input className={`nb-input${fieldError(price) ? ' nb-input-error' : ''}`} value={price} onChange={e => setPrice(e.target.value.replace(/\D/g, ''))} placeholder="e.g. 8000" inputMode="numeric" />
-            {fieldError(price) && <p className="nb-error">Rent amount is required</p>}
+            {(fieldError(price) || (attempted && parseInt(price) <= 0)) && <p className="nb-error">{!price ? 'Rent amount is required' : 'Must be greater than 0'}</p>}
           </div>
 
           <FormControl required error={fieldError(housingType)}>

@@ -141,7 +141,7 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
         address: editAddress,
         phone: editPhone,
         line: editLine,
-        price: parseInt(editPrice) || 0,
+        price: Math.max(1, parseInt(editPrice) || 1),
         housingType: editHousingType,
         bedOptions: editBedOption ? [editBedOption] : [],
         amenities: editAmenities,
@@ -351,7 +351,7 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
                             <button className="myprops-action-btn" onClick={() => setRevertToPendingId(null)}>No</button>
                           </div>
                         ) : (
-                          <button className="myprops-action-btn myprops-pending-btn" onClick={() => { setRevertToPendingId(p.id); setConfirmDeleteId(null); }}>
+                          <button className="myprops-action-btn myprops-pending-btn" onClick={() => setRevertToPendingId(p.id)}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
                               <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                             </svg>
@@ -370,7 +370,7 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
                           <button className="myprops-action-btn" onClick={() => setConfirmDeleteId(null)}>No</button>
                         </div>
                       ) : (
-                        <button className="myprops-action-btn myprops-delete-btn" onClick={() => { setConfirmDeleteId(p.id); setRevertToPendingId(null); }}>
+                        <button className="myprops-action-btn myprops-delete-btn" onClick={() => setConfirmDeleteId(p.id)}>
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
                             <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" />
                             <path d="M10 11v6M14 11v6" /><path d="M9 6V4h6v2" />

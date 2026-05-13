@@ -57,11 +57,6 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
     handleSearchUpdate('amenities', newSelectedOptions);
   };
 
-  const handleOrderByChange = (option) => {
-    setOrderBy(option);
-    handleSearchUpdate('orderBy', option);
-  };
-
   const handleNumberOfBedsChange = (option) => {
     setNumberOfBedsOption(option);
     handleSearchUpdate('numberOfBeds', option);
@@ -191,15 +186,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
               onClick={() => {
                 setShowMine(false);
                 setOrderBy(opt.value);
-                onSearch({
-                  searchTerm,
-                  bedOptions: numberOfBedsOption,
-                  orderBy: opt.value,
-                  amenities,
-                  rentRange,
-                  bathroomType: bathroomOption,
-                  showMine: false,
-                });
+                onSearch({ searchTerm, bedOptions: numberOfBedsOption, orderBy: opt.value, amenities, rentRange, bathroomType: bathroomOption, showMine: false });
               }}
             >
               {opt.label}
@@ -208,7 +195,11 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
           {user?.role === 'landlord' && (
             <button
               className={`sort-chip${showMine ? ' sort-chip--active' : ''}`}
-              onClick={() => { const next = !showMine; setShowMine(next); handleSearchUpdate('showMine', next); }}
+              onClick={() => {
+                const next = !showMine;
+                setShowMine(next);
+                onSearch({ searchTerm, bedOptions: numberOfBedsOption, orderBy, amenities, rentRange, bathroomType: bathroomOption, showMine: next });
+              }}
             >
               My Listings
             </button>
@@ -228,7 +219,6 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
                   setBathroomOption('Any');
                   setAmenities([]);
                   setRentRange([1000, 30000]);
-                  setShowMine(false);
                   onSearch({
                     searchTerm,
                     bedOptions: 'All',
@@ -236,7 +226,6 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
                     amenities: [],
                     rentRange: [1000, 30000],
                     bathroomType: 'Any',
-                    showMine: false,
                   });
                 }}>
                   Clear all

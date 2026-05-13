@@ -16,6 +16,15 @@ export const StyledRating = styled(Rating)({
   });
 
 const Review = ({ user, handleSignIn, rating, reviews, handleNewReview }) => {
+  const alreadyReviewed = user?.role === 'tenant' && reviews?.some(r => r.userId === user.uid);
+  const isLandlord = user?.role === 'landlord';
+  const cannotReview = isLandlord || alreadyReviewed;
+
+  const buttonLabel = isLandlord
+    ? 'Landlords cannot write reviews'
+    : alreadyReviewed
+    ? 'You already reviewed this'
+    : 'Write a Review';
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [ratingText, setRatingText] = useState('N/A');
 
@@ -33,6 +42,7 @@ const Review = ({ user, handleSignIn, rating, reviews, handleNewReview }) => {
     }, [rating]);
     
     const handleModalOpen = () => {
+      if (cannotReview) return;
       if (!user) {
         handleSignIn();
       } else {
@@ -52,15 +62,20 @@ const Review = ({ user, handleSignIn, rating, reviews, handleNewReview }) => {
           <div className="stars-and-review">
             <StyledRating
               name="read-only"
-              value={rating}
+              value={rating ?? 0}
               precision={0.5}
               readOnly
             />
             <div className="reviews-count">{reviews.length} Reviews</div>
           </div>
           
-          <button className="review-button" onClick={handleModalOpen} disabled={user?.role === 'landlord'} style={user?.role === 'landlord' ? { opacity: 0.4, cursor: 'not-allowed' } : {}}>
-            {user?.role === 'landlord' ? 'Landlords cannot write reviews' : 'Write a Review'}
+          <button
+            className="review-button"
+            onClick={handleModalOpen}
+            disabled={cannotReview}
+            style={cannotReview ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
+          >
+            {buttonLabel}
           </button>
           <ReviewModal 
             user={user}

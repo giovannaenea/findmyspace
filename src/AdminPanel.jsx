@@ -11,6 +11,7 @@ const AdminPanel = ({ user }) => {
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
+  const [confirmRejectId, setConfirmRejectId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,6 +49,7 @@ const AdminPanel = ({ user }) => {
     await deleteDoc(doc(db, 'properties', id));
     setPending(prev => prev.filter(p => p.id !== id));
     setActionLoading(null);
+    setConfirmRejectId(null);
   };
 
   if (loading) return <Loading />;
@@ -97,22 +99,42 @@ const AdminPanel = ({ user }) => {
                   {p.amenities?.map(a => <span key={a} className="admin-amenity-tag">{a}</span>)}
                 </div>
               </div>
-              <div className="admin-card-actions">
-                <button
-                  className="admin-approve-btn"
-                  onClick={() => handleApprove(p.id)}
-                  disabled={!!actionLoading}
-                >
-                  {actionLoading === p.id + '_approve' ? '...' : '✓ Approve'}
-                </button>
-                <button
-                  className="admin-reject-btn"
-                  onClick={() => handleReject(p.id)}
-                  disabled={!!actionLoading}
-                >
-                  {actionLoading === p.id + '_reject' ? '...' : '✕ Reject'}
-                </button>
-              </div>
+                {confirmRejectId === p.id ? (
+                  <div className="admin-confirm-row">
+                    <span className="admin-confirm-label">Permanently delete?</span>
+                    <button
+                      className="admin-confirm-yes"
+                      onClick={() => handleReject(p.id)}
+                      disabled={!!actionLoading}
+                    >
+                      {actionLoading === p.id + '_reject' ? '...' : 'Delete'}
+                    </button>
+                    <button
+                      className="admin-confirm-no"
+                      onClick={() => setConfirmRejectId(null)}
+                      disabled={!!actionLoading}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className="admin-card-actions">
+                    <button
+                      className="admin-approve-btn"
+                      onClick={() => handleApprove(p.id)}
+                      disabled={!!actionLoading}
+                    >
+                      {actionLoading === p.id + '_approve' ? '...' : '✓ Approve'}
+                    </button>
+                    <button
+                      className="admin-reject-btn"
+                      onClick={() => setConfirmRejectId(p.id)}
+                      disabled={!!actionLoading}
+                    >
+                      ✕ Reject
+                    </button>
+                  </div>
+                )}
             </div>
           ))}
         </div>

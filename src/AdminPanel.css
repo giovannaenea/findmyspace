@@ -157,3 +157,48 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* Reject confirmation row */
+.admin-confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: #fff8f8;
+}
+
+.admin-confirm-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex: 1;
+}
+
+.admin-confirm-yes {
+  padding: 6px 14px;
+  background: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.admin-confirm-yes:hover:not(:disabled) { opacity: 0.85; }
+.admin-confirm-yes:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.admin-confirm-no {
+  padding: 6px 14px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.admin-confirm-no:hover:not(:disabled) { border-color: var(--navy); color: var(--navy); }
