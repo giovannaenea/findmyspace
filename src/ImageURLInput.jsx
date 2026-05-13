@@ -30,6 +30,7 @@ const ImageUrlInput = ({ imageUrls, setImageUrls, deleteImageUrl, onUploadingCha
   const [urlInput, setUrlInput] = useState('');
   const [urlError, setUrlError] = useState('');
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const xhrRefs = useRef({});
 
   const handleUpload = async (event) => {
@@ -126,6 +127,19 @@ const ImageUrlInput = ({ imageUrls, setImageUrls, deleteImageUrl, onUploadingCha
 
   return (
     <div className="image-upload-wrap">
+      {/* In-app image preview modal */}
+      {previewUrl && (
+        <div
+          className="image-preview-overlay"
+          onClick={() => setPreviewUrl(null)}
+        >
+          <div className="image-preview-modal" onClick={e => e.stopPropagation()}>
+            <button className="image-preview-close" onClick={() => setPreviewUrl(null)}>✕</button>
+            <img src={previewUrl} alt="Preview" className="image-preview-img" />
+          </div>
+        </div>
+      )}
+
       <div className="image-upload-btns">
         <label className="image-upload-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
@@ -176,7 +190,7 @@ const ImageUrlInput = ({ imageUrls, setImageUrls, deleteImageUrl, onUploadingCha
               </svg>
               <div className="image-file-info">
                 {upload.status === 'done'
-                  ? <a href={upload.url} target="_blank" rel="noopener noreferrer" className="image-file-name">{upload.name}</a>
+                  ? <button type="button" className="image-file-name image-file-name-btn" onClick={() => setPreviewUrl(upload.url)}>{upload.name}</button>
                   : <span className="image-file-name-plain">{upload.name}</span>
                 }
                 {(upload.status === 'compressing' || upload.status === 'uploading') && (

@@ -150,7 +150,8 @@
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid var(--border);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .property-card-return-btn {

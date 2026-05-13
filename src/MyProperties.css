@@ -188,6 +188,8 @@
   background: var(--white);
   color: var(--navy);
   transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .myprops-action-btn:hover { background: var(--bg); }
@@ -197,13 +199,7 @@
 .myprops-delete-btn { color: #a32d2d; border-color: #f7c1c1; }
 .myprops-delete-btn:hover { background: #fff1f1; }
 
-.myprops-delete-confirm {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  flex-wrap: wrap;
-}
+
 
 .myprops-edit-form {
   display: flex;
@@ -316,4 +312,12 @@
 .myprops-pending-btn:hover { background: #fffbeb; }
 
 /* Card actions wrap so Return to Pending doesn't overflow */
-.myprops-card-actions { flex-wrap: wrap; gap: 6px; }
+.myprops-card-actions { flex-wrap: nowrap; gap: 6px; overflow-x: auto; }
+
+.myprops-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: nowrap;
+}

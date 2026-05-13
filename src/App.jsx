@@ -347,9 +347,9 @@ function App() {
                 conditions={conditions}
               />
             </div>
-           {loading && !isNative ? <Loading /> : (
+           {loading ? <Loading /> : (
   <div>
-    {loading || filteredProperties.length > 0
+    {filteredProperties.length > 0
       ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} onReturnToPending={handleReturnToPending} />
       : <h1 className="no-properties">No properties found</h1>
     }

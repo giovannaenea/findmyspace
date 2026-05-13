@@ -188,7 +188,19 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
             <button
               key={opt.value}
               className={`sort-chip${orderBy === opt.value && !showMine ? ' sort-chip--active' : ''}`}
-              onClick={() => { setShowMine(false); handleSearchUpdate('showMine', false); handleOrderByChange(opt.value); }}
+              onClick={() => {
+                setShowMine(false);
+                setOrderBy(opt.value);
+                onSearch({
+                  searchTerm,
+                  bedOptions: numberOfBedsOption,
+                  orderBy: opt.value,
+                  amenities,
+                  rentRange,
+                  bathroomType: bathroomOption,
+                  showMine: false,
+                });
+              }}
             >
               {opt.label}
             </button>
@@ -216,6 +228,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
                   setBathroomOption('Any');
                   setAmenities([]);
                   setRentRange([1000, 30000]);
+                  setShowMine(false);
                   onSearch({
                     searchTerm,
                     bedOptions: 'All',
@@ -223,6 +236,7 @@ const SearchBar = ({onSearch, user, handleSignIn, handleSignOut, conditions}) =>
                     amenities: [],
                     rentRange: [1000, 30000],
                     bathroomType: 'Any',
+                    showMine: false,
                   });
                 }}>
                   Clear all

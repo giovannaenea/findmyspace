@@ -82,14 +82,11 @@ button:active {
   transform: scale(0.97);
 }
 
-/* FIX 2: prevent Android auto-zoom on input focus — any input under 16px triggers it.
-   Set all inputs to 16px then scale the visual size back down with transform so the
-   layout stays the same. touch-action: manipulation also removes the 300ms tap delay. */
+/* FIX 2: prevent Android auto-zoom on input focus — handled by maximum-scale=1 in viewport meta.
+   touch-action: manipulation removes the 300ms tap delay. */
 input, textarea, select {
   font-family: 'DM Sans', sans-serif;
   touch-action: manipulation;
-  font-size: 16px !important;
-  transform-origin: left center;
 }
 
 code {
@@ -150,4 +147,12 @@ div[style*="overflowY"] {
 .property-card:active {
   transform: scale(0.98);
   opacity: 0.92;
+}
+
+.no-properties {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px 20px;
 }

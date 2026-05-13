@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { db } from './firebase.mjs';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -230,7 +231,12 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
 
             <button
               className="detail-maps-link"
-              onClick={() => window.open(`https://www.google.com/maps?q=${property.lat},${property.lng}`, '_blank')}
+              onClick={() => {
+                const url = Capacitor.isNativePlatform()
+                  ? `geo:${property.lat},${property.lng}?q=${property.lat},${property.lng}`
+                  : `https://www.google.com/maps?q=${property.lat},${property.lng}`;
+                window.open(url, '_system');
+              }}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
@@ -275,17 +281,7 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
               </span>
               <span className="detail-stat-label">Bathroom</span>
             </div>
-            {property.walkingTime > 0 && (
-              <div className="detail-stat">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="28" height="28">
-                  <circle cx="12" cy="5" r="1" fill="currentColor" />
-                  <path d="m9 20 1-5 2 3 2-8 1 5" />
-                  <path d="m6 10 3-3 2 2 2-2 3 3" />
-                </svg>
-                <span className="detail-stat-val">{property.walkingTime}</span>
-                <span className="detail-stat-label">Min walk</span>
-              </div>
-            )}
+
           </div>
         </div>
 

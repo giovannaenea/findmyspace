@@ -5,7 +5,7 @@ import './PropertyReview.css';
 import Favorite from './Favorite';
 import { formatBeds } from './propertyUtils';
 
-const PropertyReview = ({ id, name, rating, address, price, bedOptions, walkingTime, photos, reviews, user, handleSignIn, landlordId, onReturnToPending }) => {
+const PropertyReview = ({ id, name, rating, address, price, bedOptions, photos, reviews, user, handleSignIn, landlordId, onReturnToPending }) => {
   const navigate = useNavigate();
   const [confirmReturn, setConfirmReturn] = useState(false);
   const [returning, setReturning] = useState(false);
