@@ -125,7 +125,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 13px;
+  padding: 10px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--white);
@@ -166,7 +166,7 @@
 }
 
 .auth-field {
-  padding: 13px 14px;
+  padding: 10px 14px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
   font-size: 14px;
@@ -180,12 +180,12 @@
 .auth-field:focus { border-color: var(--teal); }
 
 .auth-submit-btn {
-  padding: 14px;
+  padding: 11px;
   background: var(--navy);
   color: var(--white);
   border: none;
   border-radius: var(--radius-md);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   font-family: 'DM Sans', sans-serif;
   transition: background 0.2s;
