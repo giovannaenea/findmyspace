@@ -47,8 +47,17 @@ function App() {
     showMine: false,
   };
 
+  const getInitialConditions = () => {
+    try {
+      const saved = sessionStorage.getItem('searchConditions');
+      return saved ? { ...defaultConditions, ...JSON.parse(saved) } : defaultConditions;
+    } catch {
+      return defaultConditions;
+    }
+  };
+
   const [filteredProperties, setFilteredProperties] = useState([]);
-  const [conditions, setConditions] = useState(defaultConditions);
+  const [conditions, setConditions] = useState(getInitialConditions);
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(true);
   const [user, setUser] = useState(null);
@@ -113,6 +122,7 @@ function App() {
   // ─── Search / filter — pure in-memory, no Firestore reads ────────────────────
   const handleSearch = useCallback((conditions) => {
     setConditions(conditions);
+    try { sessionStorage.setItem('searchConditions', JSON.stringify(conditions)); } catch {}
     let results = [...allPropertiesRef.current];
 
     const term = conditions.searchTerm?.trim().toLowerCase();
@@ -328,6 +338,7 @@ function App() {
     await signOut(auth);
     setUser(null);
     setConditions(defaultConditions);
+    try { sessionStorage.removeItem('searchConditions'); } catch {}
     fetchAndListen();
   };
 

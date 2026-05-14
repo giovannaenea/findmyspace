@@ -126,7 +126,11 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
     }
 
     const newRating = calculateRating(newReviews);
-    await setDoc(propertyRef, { reviews: newReviews }, { merge: true });
+    await setDoc(propertyRef, {
+      reviews: newReviews,
+      rating: parseFloat(newRating.toFixed(2)),
+      numberOfReviews: newReviews.length,
+    }, { merge: true });
 
     setProperty(prev => ({
       ...prev,
