@@ -8,7 +8,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import ImageSlider from './ImageSlider';
 import ReviewSection from './ReviewSection';
 import ReviewsPagination from './ReviewsPagination';
-import Loading from './Loading';
+import { SkeletonPropertyDetails } from './SkeletonPage';
 import MenuSelect from './MenuSelect';
 import { formatBeds } from './propertyUtils';
 import './PropertyDetails.css';
@@ -191,7 +191,7 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
     }
   };
 
-  if (loading) return <Loading />;
+  if (loading) return <SkeletonPropertyDetails />;
 
   if (notFound) return (
     <div className="detail-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', gap: 12 }}>

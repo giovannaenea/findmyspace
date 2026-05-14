@@ -1,0 +1,71 @@
+/* Shimmer keyframe — shared with SkeletonGrid.css but scoped here too */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--border) 25%,
+    #eef0f2 50%,
+    var(--border) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.sk-block {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Full page wrapper */
+.sk-page {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+/* Topbar */
+.sk-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+}
+
+.sk-topbar--tall {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px 16px 16px;
+}
+
+/* Content padding */
+.sk-content {
+  padding: 20px 16px 100px;
+}
+
+/* 2-column card grid */
+.sk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.sk-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Full-width list card (MyProperties, Admin) */
+.sk-list-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+}

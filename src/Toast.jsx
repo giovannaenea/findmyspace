@@ -10,10 +10,12 @@ const Toast = ({ message, type = 'error', onClose }) => {
 
   return (
     <div className={`toast toast--${type}`}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16" style={{ flexShrink: 0 }}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18" style={{ flexShrink: 0 }}>
         {type === 'error'
-          ? <><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><circle cx="12" cy="16" r="0.5" fill="currentColor" strokeWidth="0" /></>
-          : <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></>
+          ? <><circle cx="12" cy="12" r="10" /><line x1="12" y1="7" x2="12" y2="13" strokeWidth="2.5" strokeLinecap="round" /><circle cx="12" cy="17" r="1.2" fill="currentColor" stroke="none" /></>
+          : type === 'info'
+          ? <><circle cx="12" cy="12" r="10" /><line x1="12" y1="11" x2="12" y2="17" strokeWidth="2.5" strokeLinecap="round" /><circle cx="12" cy="7.5" r="1.2" fill="currentColor" stroke="none" /></>
+          : <><circle cx="12" cy="12" r="10" /><polyline points="7 12.5 10.5 16 17 9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></>
         }
       </svg>
       <span>{message}</span>

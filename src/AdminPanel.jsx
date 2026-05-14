@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { db } from './firebase.mjs';
 import { collection, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
-import Loading from './Loading';
+import { SkeletonAdminPanel } from './SkeletonPage';
 import BackButton from './BackButton';
 import './AdminPanel.css';
 
@@ -52,7 +52,7 @@ const AdminPanel = ({ user }) => {
     setConfirmRejectId(null);
   };
 
-  if (loading) return <Loading />;
+  if (loading) return <SkeletonAdminPanel />;
 
   // Hard guard — even if the route somehow renders this for a non-admin,
   // the component refuses to show anything. Firestore rules are the real

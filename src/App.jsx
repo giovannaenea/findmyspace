@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core';
 
 import { db, auth } from './firebase.mjs'
 import { collection, doc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, query, where } from "firebase/firestore";
-import { signInWithCredential, signOut, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, deleteUser } from "firebase/auth";
+import { signInWithCredential, signOut, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged, deleteUser } from "firebase/auth";
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
 import SearchBar from './SearchBar';
@@ -13,7 +13,8 @@ import FilterPage from './FilterPage';
 import PropertyDetails from './PropertyDetails';
 import FavoritesComponent from './FavoritesComponent';
 import NewBuilding from './NewBuilding';
-import Loading from './Loading';
+import { SkeletonHome, SkeletonAdminPanel } from './SkeletonPage';
+import PageTransition from './PageTransition';
 import PropertiesPagination from './PropertiesPagination';
 import RoleModal from './RoleModal';
 import ProfilePage from './ProfilePage';
@@ -186,16 +187,28 @@ function App() {
   const handleSignIn = async (method = 'google', roleSelection = null, email = null, password = null) => {
     if (method === 'google') {
       try {
-        const result = await FirebaseAuthentication.signInWithGoogle({
-          customParameters: [{ key: 'prompt', value: 'select_account' }],
-        });
-        const idToken = result.credential?.idToken;
-        if (!idToken) {
-          showToast('Google sign-in failed: no token received. Make sure SHA-1 is registered in Firebase Console.');
-          return;
+        let userCredential;
+
+        if (isNative) {
+          // Native (Android/iOS): use Capacitor plugin for native Google sheet
+          const result = await FirebaseAuthentication.signInWithGoogle({
+            customParameters: [{ key: 'prompt', value: 'select_account' }],
+          });
+          const idToken = result.credential?.idToken;
+          if (!idToken) {
+            showToast('Google sign-in failed: no token received. Make sure SHA-1 is registered in Firebase Console.');
+            return;
+          }
+          const credential = GoogleAuthProvider.credential(idToken);
+          userCredential = await signInWithCredential(auth, credential);
+        } else {
+          // Web (including mobile Safari): use signInWithPopup directly so the
+          // popup opens synchronously within the user-gesture, avoiding Safari's
+          // popup blocker which kills the Capacitor plugin's async path on first tap.
+          const provider = new GoogleAuthProvider();
+          provider.setCustomParameters({ prompt: 'select_account' });
+          userCredential = await signInWithPopup(auth, provider);
         }
-        const credential = GoogleAuthProvider.credential(idToken);
-        const userCredential = await signInWithCredential(auth, credential);
 
         const userRef = doc(db, "users", userCredential.user.uid);
         const docSnap = await getDoc(userRef);
@@ -318,7 +331,7 @@ function App() {
     fetchAndListen();
   };
 
-  if (authLoading && !isNative) return <Loading />;
+  if (authLoading && !isNative) return null;
 
   return (
     <Router>
@@ -331,6 +344,7 @@ function App() {
           onClose={() => setShowRoleModal(false)}
         />
       )}
+      <PageTransition>
       <Routes>
         <Route path="/" element={
           <div className="App">
@@ -343,17 +357,14 @@ function App() {
                 conditions={conditions}
               />
             </div>
-           {loading ? <Loading /> : (
+           {loading ? <SkeletonHome count={6} /> : (
   <div>
     {filteredProperties.length > 0
-      ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} onReturnToPending={handleReturnToPending} />
+      ? <PropertiesPagination properties={filteredProperties} user={user} handleSignIn={() => setShowRoleModal(true)} onReturnToPending={handleReturnToPending} onRefresh={fetchAndListen} />
       : <h1 className="no-properties">No properties found</h1>
     }
   </div>
 )}
-            <div className="menu-container">
-              <MenuSelect user={user} />
-            </div>
           </div>
         } />
         <Route path="/filter" element={<FilterPage conditions={conditions} onSearch={handleSearch} />} />
@@ -381,7 +392,7 @@ function App() {
         } />
         <Route path="/admin" element={
           authLoading
-            ? <Loading />
+            ? <SkeletonAdminPanel />
             : user?.isAdmin === true
               ? <AdminPanel user={user} />
               : <Navigate to="/" replace />
@@ -397,6 +408,8 @@ function App() {
           />
         } />
       </Routes>
+      </PageTransition>
+      <MenuSelect user={user} />
     </Router>
   );
 }

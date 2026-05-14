@@ -80,3 +80,44 @@
   opacity: 0.35;
   cursor: not-allowed;
 }
+/* ── Pull-to-refresh indicator ──────────────────────────────────── */
+.ptr-indicator {
+  position: absolute;
+  top: -52px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.ptr-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.ptr-spinner--spin svg {
+  animation: ptr-rotate 0.8s linear infinite;
+}
+
+@keyframes ptr-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.ptr-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+/* Make listings-container position: relative so ptr-indicator can be absolute */
+.listings-container {
+  position: relative;
+}

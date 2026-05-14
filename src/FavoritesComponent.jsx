@@ -6,7 +6,7 @@ import { collection, doc, getDocs, getDoc, query, where } from 'firebase/firesto
 import { getRecommendations } from './gemini.js';
 import PropertyReview from './PropertyReview';
 import MenuSelect from './MenuSelect';
-import Loading from './Loading';
+import { SkeletonFavorites } from './SkeletonPage';
 import './FavoritesComponent.css';
 
 const FavoritesComponent = ({ user, handleSearch, handleSignIn, showToast }) => {
@@ -70,7 +70,7 @@ const FavoritesComponent = ({ user, handleSearch, handleSignIn, showToast }) => 
     }
   };
 
-  if (loading) return <Loading />;
+  if (loading) return <SkeletonFavorites />;
 
   return (
     <div className="favorites-page">

@@ -110,11 +110,14 @@ code {
 /* Smooth page fade-in */
 #root {
   animation: fadeIn 0.15s ease-in;
-  height: 100%;
+  min-height: 100vh;
+  background-color: var(--bg);
 }
 
 .App {
   animation: fadeIn 0.15s ease-in;
+  min-height: 100vh;
+  background-color: var(--bg);
 }
 
 @keyframes fadeIn {
@@ -122,19 +125,9 @@ code {
   to { opacity: 1; }
 }
 
-.menu-container {
-  position: fixed;
-  bottom: 0;
-  bottom: env(safe-area-inset-bottom, 0px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  z-index: 200;
-}
 
 /* Hide scrollbar on all scrollable elements */
-* {
+*  {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }

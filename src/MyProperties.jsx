@@ -6,7 +6,7 @@ import { collection, getDocs, doc, deleteDoc, updateDoc, query, where } from 'fi
 import { Checkbox, FormControl, FormControlLabel, FormLabel, FormGroup, Radio, RadioGroup } from '@mui/material';
 import ImageUrlInput from './ImageURLInput';
 import MenuSelect from './MenuSelect';
-import Loading from './Loading';
+import { SkeletonMyProperties } from './SkeletonPage';
 import BackButton from './BackButton';
 import './MyProperties.css';
 
@@ -146,7 +146,7 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
     }
   };
 
-  if (loading) return <Loading />;
+  if (loading) return <SkeletonMyProperties />;
 
   return (
     <div className="myprops-page">

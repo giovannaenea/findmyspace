@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Rating, Modal, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -28,6 +28,17 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview, exi
   const [checks, setChecks] = useState(existingReview?.checks || {});
   const [photoUrls, setPhotoUrls] = useState(existingReview?.photos || []);
   const [uploadingCount, setUploadingCount] = useState(0);
+
+  // Re-populate fields every time the modal opens so edits always show latest saved data
+  useEffect(() => {
+    if (!isModalOpen) return;
+    setAnonymous(existingReview?.name === 'Anonymous' || false);
+    setDescription(existingReview?.description || '');
+    setRating(existingReview?.rating || 0);
+    setChecks(existingReview?.checks || {});
+    setPhotoUrls(existingReview?.photos || []);
+    setUploadingCount(0);
+  }, [isModalOpen]);
 
   const toggleCheck = (key) => {
     setChecks(prev => ({ ...prev, [key]: !prev[key] }));
