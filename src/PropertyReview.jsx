@@ -10,7 +10,7 @@ const PropertyReview = ({ id, name, rating, address, price, bedOptions, photos, 
   const [confirmReturn, setConfirmReturn] = useState(false);
   const [returning, setReturning] = useState(false);
 
-  const canReturnToPending = user && (user.isAdmin || (user.role === 'landlord' && user.uid === landlordId));
+  const canReturnToPending = user && user.isAdmin === true;
 
   const handleClick = () => {
     if (!user) {

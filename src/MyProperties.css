@@ -128,6 +128,9 @@
   padding: 3px 7px;
   border-radius: 20px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .myprops-status-badge.pending {
@@ -135,9 +138,10 @@
   color: #7a5c00;
 }
 
+/* FIX: solid teal background so "Live" is legible over any photo */
 .myprops-status-badge.approved {
-  background: rgba(40,102,110,0.12);
-  color: var(--teal);
+  background: #28666e;
+  color: #ffffff;
 }
 
 .myprops-card-body {
@@ -175,11 +179,15 @@
   color: var(--text-muted);
   margin-top: 4px;
 }
+
 .myprops-card-actions {
   display: flex;
   gap: 0;
   border-top: 1px solid var(--border);
   margin-top: 0;
+  flex-wrap: nowrap;
+  overflow: visible;
+  scrollbar-width: none;
 }
 
 .myprops-action-btn {
@@ -210,7 +218,39 @@
 .myprops-delete-btn { color: #a32d2d; }
 .myprops-delete-btn:hover { background: #fff1f1; color: #a32d2d; }
 
+/* Return to Pending button */
 
+.myprops-delete-confirm {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-right: 1px solid var(--border);
+  flex-wrap: nowrap;
+}
+
+/* ── Edit form: stack card vertically, give form full width ── */
+.myprops-card:has(.myprops-edit-form) {
+  flex-direction: column;
+  cursor: default;
+}
+
+/* card-top becomes a column too so image sits above the form */
+.myprops-card:has(.myprops-edit-form) .myprops-card-top {
+  flex-direction: column;
+}
+
+.myprops-card:has(.myprops-edit-form) .myprops-card-img-wrap {
+  width: 100%;
+  height: 160px;
+}
+
+.myprops-card:has(.myprops-edit-form) .myprops-card-body {
+  padding: 16px;
+  overflow: visible;
+}
 
 .myprops-edit-form {
   display: flex;
@@ -235,6 +275,8 @@
   color: var(--navy);
   background: var(--bg);
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .myprops-edit-input:focus { border-color: var(--teal); }
@@ -272,10 +314,6 @@
 }
 
 .myprops-edit-save:disabled { opacity: 0.6; cursor: not-allowed; }
-/* ── Full edit form expansions ── */
-.myprops-card.editing {
-  flex-direction: column;
-}
 
 .myprops-edit-form .MuiFormLabel-root {
   font-size: 13px !important;
@@ -298,40 +336,4 @@
 .myprops-edit-form .MuiCheckbox-root.Mui-checked,
 .myprops-edit-form .MuiRadio-root.Mui-checked {
   color: var(--teal) !important;
-}
-
-/* When editing, card stacks vertically so form gets full width */
-.myprops-card:has(.myprops-edit-form) {
-  flex-direction: column;
-}
-
-.myprops-card:has(.myprops-edit-form) .myprops-card-img-wrap {
-  width: 100%;
-  height: 160px;
-}
-
-.myprops-card:has(.myprops-edit-form) .myprops-card-body {
-  padding: 16px;
-}
-
-.myprops-edit-save:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-/* Return to Pending button */
-.myprops-pending-btn { color: #7a5c00; }
-.myprops-pending-btn:hover { background: #fffbeb; }
-
-/* Card actions — full width tab row */
-.myprops-card-actions { flex-wrap: nowrap; gap: 0; overflow: visible; scrollbar-width: none; }
-
-.myprops-delete-confirm {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px 8px;
-  border-right: 1px solid var(--border);
-  flex-wrap: nowrap;
 }

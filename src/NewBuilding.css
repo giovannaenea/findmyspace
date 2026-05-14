@@ -205,7 +205,7 @@
 .nb-amenities-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px 12px;
+  gap: 14px 12px;
 }
 
 .nb-amenity-item {

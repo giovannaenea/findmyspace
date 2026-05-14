@@ -33,8 +33,6 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [savingId, setSavingId] = useState(null);
-  const [revertToPendingId, setRevertToPendingId] = useState(null);
-  const [revertingId, setRevertingId] = useState(null);
   const [uploadingCount, setUploadingCount] = useState(0);
 
   const [editName, setEditName] = useState('');
@@ -85,20 +83,6 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
     }
   };
 
-  const handleRevertToPending = async (id) => {
-    setRevertingId(id);
-    try {
-      await updateDoc(doc(db, 'properties', id), { status: 'pending' });
-      setProperties(prev => prev.map(p => p.id === id ? { ...p, status: 'pending' } : p));
-      showToast?.('Listing returned to pending review.', 'success');
-    } catch (err) {
-      console.error(err);
-      showToast?.('Failed to update listing. Please try again.');
-    } finally {
-      setRevertingId(null);
-      setRevertToPendingId(null);
-    }
-  };
 
   const startEdit = (p) => {
     setEditingId(p.id);
@@ -343,24 +327,6 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
                   </svg>
                   Edit
                 </button>
-                {p.status === 'approved' && (
-                  revertToPendingId === p.id ? (
-                    <div className="myprops-delete-confirm">
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Return to pending?</span>
-                      <button className="myprops-action-btn myprops-pending-btn" onClick={() => handleRevertToPending(p.id)} disabled={revertingId === p.id}>
-                        {revertingId === p.id ? '...' : 'Yes'}
-                      </button>
-                      <button className="myprops-action-btn" onClick={() => setRevertToPendingId(null)}>No</button>
-                    </div>
-                  ) : (
-                    <button className="myprops-action-btn myprops-pending-btn" onClick={() => { setRevertToPendingId(p.id); setConfirmDeleteId(null); }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
-                        <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-                      </svg>
-                      Return to Pending
-                    </button>
-                  )
-                )}
                 {confirmDeleteId === p.id ? (
                   <div className="myprops-delete-confirm">
                     <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
@@ -372,7 +338,7 @@ const MyProperties = ({ user, handleSignIn, showToast }) => {
                     <button className="myprops-action-btn" onClick={() => setConfirmDeleteId(null)}>No</button>
                   </div>
                 ) : (
-                  <button className="myprops-action-btn myprops-delete-btn" onClick={() => { setConfirmDeleteId(p.id); setRevertToPendingId(null); }}>
+                  <button className="myprops-action-btn myprops-delete-btn" onClick={() => setConfirmDeleteId(p.id)}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
                       <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" />
                       <path d="M10 11v6M14 11v6" /><path d="M9 6V4h6v2" />
