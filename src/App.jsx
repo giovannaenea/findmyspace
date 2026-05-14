@@ -98,6 +98,37 @@ function App() {
 
   const allPropertiesRef = React.useRef([]);
 
+  const conditionsRef = React.useRef(conditions);
+  useEffect(() => { conditionsRef.current = conditions; }, [conditions]);
+
+  const applyConditions = (allProperties, cond) => {
+    let results = [...allProperties];
+    const term = cond.searchTerm?.trim().toLowerCase();
+    if (term) results = results.filter(p =>
+      p.name?.toLowerCase().includes(term) ||
+      p.address?.toLowerCase().includes(term)
+    );
+    if (cond.bedOptions && cond.bedOptions !== 'All')
+      results = results.filter(p => p.bedOptions?.includes(cond.bedOptions));
+    if (Array.isArray(cond.amenities) && cond.amenities.length > 0)
+      results = results.filter(p => cond.amenities.every(a => p.amenities?.includes(a)));
+    if (cond.rentRange) {
+      const [min, max] = cond.rentRange;
+      results = results.filter(p => p.price >= min && p.price <= max);
+    }
+    if (cond.bathroomType && cond.bathroomType !== 'Any')
+      results = results.filter(p => p.amenities?.includes(cond.bathroomType));
+    if (cond.showMine && userRef.current?.uid)
+      results = results.filter(p => p.landlordId === userRef.current.uid);
+    if (cond.orderBy && cond.orderBy !== 'All')
+      results = [...results].sort((a, b) =>
+        cond.orderBy === 'rating'
+          ? (b.rating || 0) - (a.rating || 0)
+          : (b.numberOfReviews || 0) - (a.numberOfReviews || 0)
+      );
+    return results;
+  };
+
   const fetchAndListen = async () => {
     setLoading(true);
     try {
@@ -107,7 +138,7 @@ function App() {
         .map(doc => ({ id: doc.id, ...doc.data() }))
         .filter(p => p.id && p.name);
       allPropertiesRef.current = properties;
-      setFilteredProperties(properties);
+      setFilteredProperties(applyConditions(properties, conditionsRef.current));
     } catch (error) {
       console.error('Error fetching properties:', error);
       showToast('Failed to load properties. Please refresh.');
@@ -122,42 +153,9 @@ function App() {
   // ─── Search / filter — pure in-memory, no Firestore reads ────────────────────
   const handleSearch = useCallback((conditions) => {
     setConditions(conditions);
+    conditionsRef.current = conditions;
     try { sessionStorage.setItem('searchConditions', JSON.stringify(conditions)); } catch {}
-    let results = [...allPropertiesRef.current];
-
-    const term = conditions.searchTerm?.trim().toLowerCase();
-    if (term) results = results.filter(p =>
-      p.name?.toLowerCase().includes(term) ||
-      p.address?.toLowerCase().includes(term)
-    );
-
-    if (conditions.bedOptions && conditions.bedOptions !== 'All')
-      results = results.filter(p => p.bedOptions?.includes(conditions.bedOptions));
-
-    if (Array.isArray(conditions.amenities) && conditions.amenities.length > 0)
-      results = results.filter(p =>
-        conditions.amenities.every(a => p.amenities?.includes(a))
-      );
-
-    if (conditions.rentRange) {
-      const [min, max] = conditions.rentRange;
-      results = results.filter(p => p.price >= min && p.price <= max);
-    }
-
-    if (conditions.bathroomType && conditions.bathroomType !== 'Any')
-      results = results.filter(p => p.amenities?.includes(conditions.bathroomType));
-
-    if (conditions.showMine && userRef.current?.uid)
-      results = results.filter(p => p.landlordId === userRef.current.uid);
-
-    if (conditions.orderBy && conditions.orderBy !== 'All')
-      results = [...results].sort((a, b) =>
-        conditions.orderBy === 'rating'
-          ? (b.rating || 0) - (a.rating || 0)
-          : (b.numberOfReviews || 0) - (a.numberOfReviews || 0)
-      );
-
-    setFilteredProperties(results);
+    setFilteredProperties(applyConditions(allPropertiesRef.current, conditions));
   }, []);
 
   // ─── Return to pending ────────────────────────────────────────────────────────
