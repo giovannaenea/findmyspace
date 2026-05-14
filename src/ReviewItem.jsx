@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyledRating } from './ReviewSection';
 import './ReviewItem.css';
 import { db } from './firebase.mjs';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 const CHECK_CATEGORIES = [
   { key: 'noise', label: 'Noise' },
@@ -12,7 +12,6 @@ const CHECK_CATEGORIES = [
   { key: 'landlord', label: 'Landlord Treatment' },
 ];
 
-// FIX: added propertyLandlordId prop so we can check ownership
 const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId, propertyLandlordId }) => {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [showReplyBox, setShowReplyBox] = useState(false);
@@ -20,41 +19,79 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(null);
-  const [votes, setVotes] = useState({ upvotes: 0, downvotes: 0 });
+  const [votes, setVotes] = useState({ upvotes: review.upvotes || 0, downvotes: review.downvotes || 0 });
 
+  // Load this user's persisted vote from their Firestore user doc on mount.
+  // The votes field is a map: { [propertyId_reviewId]: 'up' | 'down' }
   useEffect(() => {
-    setVotes({ upvotes: review.upvotes || 0, downvotes: review.downvotes || 0 });
-  }, []);
+    if (!user?.uid) return;
+    const key = `${propertyId}_${review.id}`;
+    getDoc(doc(db, 'users', user.uid)).then(snap => {
+      if (!snap.exists()) return;
+      const vote = snap.data().votes?.[key];
+      if (vote === 'up') setUpvoted(true);
+      else if (vote === 'down') setDownvoted(true);
+    }).catch(() => {/* non-critical — votes just won't show as active */});
+  }, [user?.uid, propertyId, review.id]);
 
   const handleUpvote = () => {
-    let newVotes = { ...votes };
-    newVotes.upvotes = Math.max(0, newVotes.upvotes + (upvoted ? -1 : 1));
-    setUpvoted(!upvoted);
-    if (downvoted) { setDownvoted(false); newVotes.downvotes = Math.max(0, newVotes.downvotes - 1); }
+    if (!user) return;
+    const wasUpvoted = upvoted;
+    const wasDownvoted = downvoted;
+    const newUpvoted = !wasUpvoted;
+    const newDownvoted = false;
+
+    const newVotes = {
+      upvotes: Math.max(0, votes.upvotes + (wasUpvoted ? -1 : 1)),
+      downvotes: Math.max(0, votes.downvotes - (wasDownvoted ? 1 : 0)),
+    };
+    setUpvoted(newUpvoted);
+    setDownvoted(newDownvoted);
     setVotes(newVotes);
-    updateVotes(newVotes);
+    persistVote(newVotes, newUpvoted ? 'up' : null);
   };
 
   const handleDownvote = () => {
-    let newVotes = { ...votes };
-    newVotes.downvotes = Math.max(0, newVotes.downvotes + (downvoted ? -1 : 1));
-    setDownvoted(!downvoted);
-    if (upvoted) { setUpvoted(false); newVotes.upvotes = Math.max(0, newVotes.upvotes - 1); }
+    if (!user) return;
+    const wasUpvoted = upvoted;
+    const wasDownvoted = downvoted;
+    const newDownvoted = !wasDownvoted;
+    const newUpvoted = false;
+
+    const newVotes = {
+      upvotes: Math.max(0, votes.upvotes - (wasUpvoted ? 1 : 0)),
+      downvotes: Math.max(0, votes.downvotes + (wasDownvoted ? -1 : 1)),
+    };
+    setUpvoted(newUpvoted);
+    setDownvoted(newDownvoted);
     setVotes(newVotes);
-    updateVotes(newVotes);
+    persistVote(newVotes, newDownvoted ? 'down' : null);
   };
 
-  const updateVotes = async (newVotes) => {
-    const propertyRef = doc(db, 'properties', propertyId);
-    const docSnap = await getDoc(propertyRef);
-    if (docSnap.exists()) {
-      let reviews = docSnap.data().reviews;
-      const index = reviews.findIndex((r) => r.id === review.id);
-      if (index !== -1) {
-        reviews[index].upvotes = newVotes.upvotes;
-        reviews[index].downvotes = newVotes.downvotes;
-        await setDoc(propertyRef, { reviews }, { merge: true });
+  const persistVote = async (newVotes, voteChoice) => {
+    try {
+      const propertyRef = doc(db, 'properties', propertyId);
+      const docSnap = await getDoc(propertyRef);
+      if (docSnap.exists()) {
+        const freshReviews = docSnap.data().reviews || [];
+        const updatedReviews = freshReviews.map(r =>
+          r.id === review.id
+            ? { ...r, upvotes: newVotes.upvotes, downvotes: newVotes.downvotes }
+            : r
+        );
+        await setDoc(propertyRef, { reviews: updatedReviews }, { merge: true });
       }
+
+      if (user?.uid) {
+        const key = `${propertyId}_${review.id}`;
+        const userRef = doc(db, 'users', user.uid);
+        const voteUpdate = voteChoice === null
+          ? { [`votes.${key}`]: null }
+          : { [`votes.${key}`]: voteChoice };
+        await updateDoc(userRef, voteUpdate);
+      }
+    } catch (err) {
+      console.error('Failed to persist vote:', err);
     }
   };
 
@@ -62,12 +99,10 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
     ? CHECK_CATEGORIES.filter(c => review.checks[c.key])
     : [];
 
-  // FIX: only show Reply button if the logged-in user is THIS property's landlord
   const isPropertyLandlord = user?.role === 'landlord' && user?.uid === propertyLandlordId;
 
   return (
     <div className="review-item">
-      {/* Top row: avatar + name + date + rating */}
       <div className="review-header">
         <img
           src={review.profilePicture || 'https://cdn.vectorstock.com/i/preview-1x/28/63/profile-placeholder-image-gray-silhouette-vector-21542863.jpg'}
@@ -84,7 +119,6 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
         <StyledRating name="read-only" value={review.rating} precision={0.5} readOnly size="small" />
       </div>
 
-      {/* Check badges */}
       {activeChecks.length > 0 && (
         <div className="review-checks">
           {activeChecks.map(({ key, label }) => (
@@ -98,10 +132,8 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
         </div>
       )}
 
-      {/* Description */}
       <p className="review-desc">{review.description}</p>
 
-      {/* Photos */}
       {review.photos && review.photos.length > 0 && (
         <div>
           <div className="review-photos">
@@ -119,7 +151,6 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
         </div>
       )}
 
-      {/* Votes + delete */}
       <div className="review-footer">
         <div className="review-votes">
           <button className={`vote-btn${upvoted ? ' voted' : ''}`} onClick={handleUpvote}>
@@ -146,10 +177,7 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
           </button>
         )}
         {isPropertyLandlord && (
-          <button
-            className="reply-btn"
-            onClick={() => setShowReplyBox(!showReplyBox)}
-          >
+          <button className="reply-btn" onClick={() => setShowReplyBox(!showReplyBox)}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
@@ -158,7 +186,6 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
         )}
       </div>
 
-      {/* Existing landlord reply */}
       {review.landlordReply && !showReplyBox && (
         <div className="landlord-reply">
           <p className="landlord-reply-label">
@@ -171,7 +198,6 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
         </div>
       )}
 
-      {/* Reply input box */}
       {showReplyBox && (
         <div className="reply-box">
           <textarea
@@ -192,7 +218,6 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
         </div>
       )}
 
-      {/* Lightbox */}
       {lightboxIndex !== null && review.photos?.length > 0 && (
         <div className="lightbox-overlay" onClick={() => setLightboxIndex(null)}>
           <button className="lightbox-close" onClick={() => setLightboxIndex(null)}>

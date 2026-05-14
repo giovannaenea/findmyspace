@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { auth } from './firebase.mjs';
 import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -6,7 +6,7 @@ import './RoleModal.css';
 
 // screens: 'options' | 'roleSelect' | 'register' | 'login' | 'forgotPassword'
 
-const RoleModal = ({ onSignIn, onClose }) => {
+const RoleModal = ({ onSignIn, onClose, isOpen }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [screen, setScreen] = useState('options');
   const [email, setEmail] = useState('');
@@ -15,6 +15,23 @@ const RoleModal = ({ onSignIn, onClose }) => {
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
   const [resetSent, setResetSent] = useState(false);
+
+  // Reset all internal state whenever the modal is opened, so stale form
+  // values from a previous session don't bleed through. This replaces the
+  // key={Date.now()} hack that was used in App.jsx, which forced a full
+  // unmount/remount on every open and broke focus management.
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedRole(null);
+      setScreen('options');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setDisplayName('');
+      setError('');
+      setResetSent(false);
+    }
+  }, [isOpen]);
 
   const reset = () => {
     setEmail(''); setPassword(''); setConfirmPassword('');
@@ -291,6 +308,7 @@ const RoleModal = ({ onSignIn, onClose }) => {
 RoleModal.propTypes = {
   onSignIn: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool,
 };
 
 export default RoleModal;

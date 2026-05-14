@@ -146,7 +146,15 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
   const handleReply = async (reviewId, replyText) => {
     try {
       const propertyRef = doc(db, 'properties', property.id);
-      const updatedReviews = property.reviews.map(r =>
+      // Re-fetch the latest reviews from Firestore so we don't overwrite
+      // any concurrent changes made by other users or tabs.
+      const docSnap = await getDoc(propertyRef);
+      if (!docSnap.exists()) {
+        showToast?.('Property no longer exists.');
+        return;
+      }
+      const freshReviews = docSnap.data().reviews || [];
+      const updatedReviews = freshReviews.map(r =>
         r.id === reviewId ? { ...r, landlordReply: replyText } : r
       );
       await setDoc(propertyRef, { reviews: updatedReviews }, { merge: true });

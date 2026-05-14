@@ -41,6 +41,8 @@ input, textarea {
 html {
   overscroll-behavior: none;
   height: 100%;
+  /* Desktop: neutral background so the app column stands out */
+  background-color: #d8dfe6;
 }
 
 body {
@@ -63,6 +65,18 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
   overscroll-behavior-y: none;
+  /* Desktop: card shadow so it reads as a phone column, not a stretched blob */
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 8px 40px rgba(0,0,0,0.18);
+}
+
+/* On actual mobile screens there is no surrounding space, so drop the shadow */
+@media (max-width: 480px) {
+  html {
+    background-color: var(--bg);
+  }
+  body {
+    box-shadow: none;
+  }
 }
 
 body::-webkit-scrollbar {

@@ -20,11 +20,6 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      // FIX #14: allow anyone to read a user doc so PropertyDetails can fetch
-      // the landlord's name without requiring the visitor to be logged in.
-      // Only name and profilePicture are stored here alongside private fields,
-      // so if you want to be stricter you can add a separate /publicProfiles
-      // subcollection — but for a student project this is fine.
       allow read: if true;
 
       allow create: if request.auth.uid == userId
@@ -45,16 +40,26 @@ service cloud.firestore {
                     && request.resource.data.status == 'pending'
                     && request.resource.data.landlordId == request.auth.uid;
 
-      // Landlord editing their own listing (cannot change status or landlordId)
       allow update: if isSignedIn()
                     && resource.data.landlordId == request.auth.uid
                     && !('status' in request.resource.data.diff(resource.data).affectedKeys())
                     && !('landlordId' in request.resource.data.diff(resource.data).affectedKeys());
 
-      // Any signed-in user can update reviews, rating, and numberOfReviews
-      // (for new reviews, upvotes/downvotes). They cannot touch any other field.
+      // Submitting or editing a review: signed-in user may only touch
+      // reviews, rating, and numberOfReviews, and the array may only
+      // grow or shrink by 1 at a time (no bulk overwrites).
       allow update: if isSignedIn()
-                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reviews', 'rating', 'numberOfReviews']);
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['reviews', 'rating', 'numberOfReviews'])
+                    && request.resource.data.reviews.size() >= resource.data.reviews.size() - 1
+                    && request.resource.data.reviews.size() <= resource.data.reviews.size() + 1;
+
+      // Vote updates: signed-in user may only touch reviews (vote counts),
+      // and the array size must stay exactly the same — no additions or deletions.
+      allow update: if isSignedIn()
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['reviews'])
+                    && request.resource.data.reviews.size() == resource.data.reviews.size();
 
       allow update: if isAdmin();
       allow delete: if isAdmin()

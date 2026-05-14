@@ -31,7 +31,7 @@ function PendingNavigator({ pendingNav, onDone }) {
       navigate(pendingNav);
       onDone();
     }
-  }, [pendingNav]);
+  }, [pendingNav, onDone]);
   return null;
 }
 
@@ -164,16 +164,22 @@ function App() {
 
   // ─── New property ─────────────────────────────────────────────────────────────
   const handleNewProperty = async (newProperty) => {
-    const { v4: uuidv4 } = await import('uuid');
-    const id = uuidv4();
-    const propertyRef = doc(db, 'properties', id);
-    await setDoc(propertyRef, {
-      ...newProperty,
-      landlordId: user?.uid || null,
-      status: 'pending',
-      submittedAt: Date.now(),
-    });
-    return true;
+    try {
+      const { v4: uuidv4 } = await import('uuid');
+      const id = uuidv4();
+      const propertyRef = doc(db, 'properties', id);
+      await setDoc(propertyRef, {
+        ...newProperty,
+        landlordId: user?.uid || null,
+        status: 'pending',
+        submittedAt: Date.now(),
+      });
+      return true;
+    } catch (err) {
+      console.error('Failed to submit property:', err);
+      showToast('Failed to submit listing. Please try again.');
+      return false;
+    }
   };
 
   // ─── Sign in ──────────────────────────────────────────────────────────────────
@@ -195,7 +201,6 @@ function App() {
         const docSnap = await getDoc(userRef);
 
         if (!docSnap.exists()) {
-          // Brand new account — roleSelection must be set (Sign Up path)
           await setDoc(userRef, {
             name: userCredential.user.displayName,
             profilePicture: userCredential.user.photoURL,
@@ -207,8 +212,6 @@ function App() {
           const userData = docSnap.data();
           const isAdmin = userData.isAdmin === true;
           const storedRole = userData.role;
-          // If they came via Sign Up but already have an account, log them in
-          // with their stored role and notify them via a toast
           if (roleSelection && storedRole && storedRole !== roleSelection) {
             showToast(`You already have an account as a ${storedRole}. Logged in as ${storedRole}.`, 'info');
           }
@@ -290,7 +293,6 @@ function App() {
     try {
       const currentUser = auth.currentUser;
       if (!currentUser) return;
-      // Delete all listings owned by this landlord
       const listingsSnap = await getDocs(query(collection(db, 'properties'), where('landlordId', '==', currentUser.uid)));
       await Promise.all(listingsSnap.docs.map(d => deleteDoc(doc(db, 'properties', d.id))));
       await deleteDoc(doc(db, 'users', currentUser.uid));
@@ -324,7 +326,7 @@ function App() {
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       {showRoleModal && (
         <RoleModal
-          key={Date.now()}
+          isOpen={showRoleModal}
           onSignIn={handleSignIn}
           onClose={() => setShowRoleModal(false)}
         />
