@@ -88,15 +88,20 @@
   overflow: hidden;
   cursor: pointer;
   display: flex;
-  gap: 0;
+  flex-direction: column;
   transition: box-shadow 0.2s;
 }
 
 .myprops-card:hover { box-shadow: 0 4px 16px rgba(3,63,99,0.12); }
 
+.myprops-card-top {
+  display: flex;
+  gap: 0;
+}
+
 .myprops-card-img-wrap {
-  width: 110px;
-  height: 110px;
+  width: 100px;
+  height: 100px;
   flex-shrink: 0;
   position: relative;
 }
@@ -136,11 +141,13 @@
 }
 
 .myprops-card-body {
-  padding: 12px 14px;
+  padding: 10px 12px;
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  overflow: hidden;
 }
 
 .myprops-card-name {
@@ -170,34 +177,38 @@
 }
 .myprops-card-actions {
   display: flex;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 0;
 }
 
 .myprops-action-btn {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 10px;
-  border-radius: 8px;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 4px;
+  border-radius: 0;
   font-size: 12px;
   font-weight: 600;
   font-family: 'DM Sans', sans-serif;
   cursor: pointer;
-  border: 1px solid var(--border);
+  border: none;
+  border-right: 1px solid var(--border);
   background: var(--white);
   color: var(--navy);
-  transition: all 0.15s;
+  transition: background 0.15s, color 0.15s;
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
+.myprops-action-btn:last-child { border-right: none; }
 .myprops-action-btn:hover { background: var(--bg); }
 
-.myprops-edit-btn:hover { border-color: var(--teal); color: var(--teal); }
+.myprops-edit-btn:hover { background: rgba(3,63,99,0.05); color: var(--navy); }
 
-.myprops-delete-btn { color: #a32d2d; border-color: #f7c1c1; }
-.myprops-delete-btn:hover { background: #fff1f1; }
+.myprops-delete-btn { color: #a32d2d; }
+.myprops-delete-btn:hover { background: #fff1f1; color: #a32d2d; }
 
 
 
@@ -308,16 +319,19 @@
   cursor: not-allowed;
 }
 /* Return to Pending button */
-.myprops-pending-btn { color: #7a5c00; border-color: #f5dfa0; }
+.myprops-pending-btn { color: #7a5c00; }
 .myprops-pending-btn:hover { background: #fffbeb; }
 
-/* Card actions wrap so Return to Pending doesn't overflow */
-.myprops-card-actions { flex-wrap: nowrap; gap: 6px; overflow-x: auto; }
+/* Card actions — full width tab row */
+.myprops-card-actions { flex-wrap: nowrap; gap: 0; overflow: visible; scrollbar-width: none; }
 
 .myprops-delete-confirm {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  margin-top: 6px;
+  padding: 6px 8px;
+  border-right: 1px solid var(--border);
   flex-wrap: nowrap;
 }

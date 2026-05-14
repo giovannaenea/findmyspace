@@ -16,14 +16,15 @@ export const StyledRating = styled(Rating)({
   });
 
 const Review = ({ user, handleSignIn, rating, reviews, handleNewReview }) => {
-  const alreadyReviewed = user?.role === 'tenant' && reviews?.some(r => r.userId === user.uid);
+  const existingReview = user ? reviews?.find(r => r.userId === user.uid) : null;
+  const alreadyReviewed = !!existingReview;
   const isLandlord = user?.role === 'landlord';
-  const cannotReview = isLandlord || alreadyReviewed;
+  const cannotReview = isLandlord;
 
   const buttonLabel = isLandlord
     ? 'Landlords cannot write reviews'
     : alreadyReviewed
-    ? 'You already reviewed this'
+    ? 'Edit Review'
     : 'Write a Review';
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [ratingText, setRatingText] = useState('N/A');
@@ -81,12 +82,9 @@ const Review = ({ user, handleSignIn, rating, reviews, handleNewReview }) => {
             user={user}
             isModalOpen={isModalOpen} 
             handleModalClose={handleModalClose}
-            handleNewReview={handleNewReview} 
+            handleNewReview={handleNewReview}
+            existingReview={existingReview}
           />
-
-          {/* {sortedReviews.map((review, index) => (
-            <ReviewItem key={index} index={index} propertyId={propertyId} review={review} />
-          ))} */}
       </div>
     </div>
   );

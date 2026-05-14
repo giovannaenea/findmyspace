@@ -111,25 +111,32 @@ const PropertyDetails = ({ user, handleSignIn, handleSignOut, handleSearch, show
   try {
     const propertyRef = doc(db, 'properties', property.id);
     const docSnap = await getDoc(propertyRef);
-    const newReviews = [...(docSnap.data().reviews || []), newReview];
+    const existingReviews = docSnap.data().reviews || [];
+    const isEdit = existingReviews.some(r => r.userId === newReview.userId);
+
+    let newReviews;
+    if (isEdit) {
+      newReviews = existingReviews.map(r =>
+        r.userId === newReview.userId
+          ? { ...newReview, editedAt: Date.now() }
+          : r
+      );
+    } else {
+      newReviews = [...existingReviews, newReview];
+    }
+
     const newRating = calculateRating(newReviews);
+    await setDoc(propertyRef, { reviews: newReviews }, { merge: true });
 
-    // Only update reviews — Firestore rules only allow signed-in users to touch reviews
-    await setDoc(propertyRef, {
-      reviews: newReviews,
-    }, { merge: true });
-
-    // Update local state with all computed fields
     setProperty(prev => ({
       ...prev,
       reviews: newReviews,
       numberOfReviews: newReviews.length,
       rating: parseFloat(newRating.toFixed(2)),
-      photos: [...(prev.photos || []), ...(newReview.photos || [])],
     }));
     handleSearch();
     hapticMedium();
-    showToast?.('Review submitted!', 'success');
+    showToast?.(isEdit ? 'Review updated!' : 'Review submitted!', 'success');
   } catch (error) {
     console.error('Error adding review', error);
     showToast?.('Failed to submit review. Please try again.');

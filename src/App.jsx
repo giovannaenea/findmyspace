@@ -183,7 +183,12 @@ function App() {
         const result = await FirebaseAuthentication.signInWithGoogle({
           customParameters: [{ key: 'prompt', value: 'select_account' }],
         });
-        const credential = GoogleAuthProvider.credential(result.credential?.idToken);
+        const idToken = result.credential?.idToken;
+        if (!idToken) {
+          showToast('Google sign-in failed: no token received. Make sure SHA-1 is registered in Firebase Console.');
+          return;
+        }
+        const credential = GoogleAuthProvider.credential(idToken);
         const userCredential = await signInWithCredential(auth, credential);
 
         const userRef = doc(db, "users", userCredential.user.uid);

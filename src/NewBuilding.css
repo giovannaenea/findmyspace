@@ -32,6 +32,12 @@
   padding: 12px 14px;
 }
 
+.new-building-container fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
 /* Remove double padding on text fields */
 .new-building-container .MuiTextField-root .MuiOutlinedInput-root {
   padding: 0;
@@ -62,6 +68,8 @@
   text-transform: uppercase;
   letter-spacing: 0.4px;
   margin-bottom: 4px;
+  display: block;
+  width: 100%;
 }
 
 .new-building-container .MuiFormControlLabel-label {
@@ -192,4 +200,21 @@
   background: var(--border);
   color: var(--text-muted);
   cursor: not-allowed;
+}
+/* Amenities grid — plain checkboxes matching other fields */
+.nb-amenities-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.nb-amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
 }

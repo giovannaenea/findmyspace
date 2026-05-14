@@ -76,7 +76,10 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
         />
         <div className="review-meta">
           <p className="review-name">{review.name}</p>
-          <p className="review-date">{review.date ? new Date(review.date).toLocaleDateString('en-US') : ''}</p>
+          <p className="review-date">
+            {review.date ? new Date(review.date).toLocaleDateString('en-US') : ''}
+            {review.editedAt && <span className="review-edited-badge"> (edited)</span>}
+          </p>
         </div>
         <StyledRating name="read-only" value={review.rating} precision={0.5} readOnly size="small" />
       </div>
@@ -109,7 +112,7 @@ const ReviewItem = ({ user, review, handleDeleteReview, handleReply, propertyId,
             ))}
           </div>
           {review.photos.length > 3 && (
-            <button className="review-photos-toggle" onClick={() => setShowAllPhotos(p => !p)}>
+            <button className="review-photos-toggle" onClick={(e) => { e.stopPropagation(); setShowAllPhotos(p => !p); }}>
               {showAllPhotos ? 'Show less' : `+${review.photos.length - 3} more photo${review.photos.length - 3 > 1 ? 's' : ''}`}
             </button>
           )}

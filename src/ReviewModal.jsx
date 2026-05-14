@@ -20,12 +20,13 @@ const CHECK_CATEGORIES = [
 
 const ANON_AVATAR = 'https://cdn.vectorstock.com/i/preview-1x/28/63/profile-placeholder-image-gray-silhouette-vector-21542863.jpg';
 
-const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) => {
-  const [anonymous, setAnonymous] = useState(false);
-  const [description, setDescription] = useState('');
-  const [rating, setRating] = useState(0);
-  const [checks, setChecks] = useState({});
-  const [photoUrls, setPhotoUrls] = useState([]);
+const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview, existingReview }) => {
+  const isEditing = !!existingReview;
+  const [anonymous, setAnonymous] = useState(existingReview?.name === 'Anonymous' || false);
+  const [description, setDescription] = useState(existingReview?.description || '');
+  const [rating, setRating] = useState(existingReview?.rating || 0);
+  const [checks, setChecks] = useState(existingReview?.checks || {});
+  const [photoUrls, setPhotoUrls] = useState(existingReview?.photos || []);
   const [uploadingCount, setUploadingCount] = useState(0);
 
   const toggleCheck = (key) => {
@@ -48,16 +49,16 @@ const ReviewModal = ({ user, isModalOpen, handleModalClose, handleNewReview }) =
   const handleSubmit = () => {
     if (!isValid) return;
     const newReview = {
-      id: uuidv4(),
+      id: existingReview?.id || uuidv4(),
       name: anonymous ? 'Anonymous' : displayName,
       profilePicture: anonymous ? ANON_AVATAR : avatarSrc,
       rating,
       description,
       checks,
       photos: photoUrls,
-      date: Date.now(),
-      upvotes: 0,
-      downvotes: 0,
+      date: existingReview?.date || Date.now(),
+      upvotes: existingReview?.upvotes || 0,
+      downvotes: existingReview?.downvotes || 0,
       userId: user.uid,
     };
     handleNewReview(newReview);

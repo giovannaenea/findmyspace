@@ -376,3 +376,9 @@
 .reply-submit:not(:disabled):hover {
   background: var(--teal);
 }
+.review-edited-badge {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 400;
+}

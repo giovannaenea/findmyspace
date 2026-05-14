@@ -262,21 +262,25 @@ const NewBuilding = ({ handleNewProperty, showToast, user }) => {
             </RadioGroup>
           </FormControl>
 
-          <FormControl component="fieldset" error={fieldError(amenities.length > 0)}>
-            <FormLabel component="legend">
+          <div className="nb-section">
+            <label className="nb-label">
               Amenities *
               {fieldError(amenities.length > 0) && <span style={{ color: '#e53e3e', fontSize: 12 }}> — select at least one</span>}
-            </FormLabel>
-            <FormGroup row>
+            </label>
+            <div className="nb-amenities-grid">
               {amenityOptions.map(opt => (
-                <FormControlLabel
-                  key={opt}
-                  control={<Checkbox checked={amenities.includes(opt)} onChange={() => handleAmenityChange(opt)} size="small" />}
-                  label={opt}
-                />
+                <label key={opt} className="nb-amenity-item">
+                  <input
+                    type="checkbox"
+                    checked={amenities.includes(opt)}
+                    onChange={() => handleAmenityChange(opt)}
+                    style={{ accentColor: 'var(--teal)', width: 15, height: 15, flexShrink: 0 }}
+                  />
+                  <span>{opt}</span>
+                </label>
               ))}
-            </FormGroup>
-          </FormControl>
+            </div>
+          </div>
 
           <ImageUrlInput
             imageUrls={imageUrls}

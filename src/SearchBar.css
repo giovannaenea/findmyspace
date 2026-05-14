@@ -159,6 +159,18 @@
   color: var(--cream);
 }
 
+.sort-chip--active:active,
+.sort-chip--active:hover {
+  background: var(--teal);
+  color: var(--cream);
+  opacity: 0.85;
+}
+
+.sort-chip:active:not(.sort-chip--active) {
+  background: var(--bg);
+  color: var(--teal);
+}
+
 /* ── Filter drawer ── */
 .filter-drawer {
   background: var(--white);
